@@ -1,3 +1,4 @@
+# Solution
 def part1(data):
     frequency = sum(int(x) for x in data)
     return frequency
