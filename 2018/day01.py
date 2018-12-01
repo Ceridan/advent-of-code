@@ -30,7 +30,7 @@ test(14, part2(['+7', '+7', '-2', '-7', '-4']))
 
 # Solve real puzzle 
 filename = 'data/day01.txt'
-content = [line.rstrip('\n') for line in open(filename, 'r')]
+data = [line.rstrip('\n') for line in open(filename, 'r')]
 
-print('Day 01, part 1: %r' % (part1(content)))
-print('Day 01, part 2: %r' % (part2(content)))
+print('Day 01, part 1: %r' % (part1(data)))
+print('Day 01, part 2: %r' % (part2(data)))
