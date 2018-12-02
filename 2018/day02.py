@@ -33,5 +33,5 @@ test('fgij', part2(['abcde', 'fghij', 'klmno', 'pqrst', 'fguij', 'axcye', 'wvxyz
 filename = 'data/day02.txt'
 data = [line.rstrip('\n') for line in open(filename, 'r')]
 
-print('Day 01, part 1: %r' % (part1(data)))
-print('Day 01, part 2: %r' % (part2(data)))
+print('Day 02, part 1: %r' % (part1(data)))
+print('Day 02, part 2: %r' % (part2(data)))
