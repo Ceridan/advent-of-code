@@ -14,7 +14,27 @@ def part1(data):
     return result
 
 def part2(data):       
-    pass
+    pattern = r'\#([0-9]+) \@ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)'
+    tiles = {}
+    ids = {}
+    for line in data:
+        (id, left, top, width, height) = re.findall(pattern, line)[0]
+        (id, left, top, width, height) = (int(id), int(left), int(top), int(width), int(height))
+        ids[id] = width * height
+        for x in range(left, left + width):
+            for y in range(top, top + height):
+                if (x, y) in tiles:
+                    tiles[(x, y)].append(id)
+                else:
+                    tiles[(x, y)] = [id]
+    tile_ids = {}
+    for (x, y) in tiles:
+        if len(tiles[(x, y)]) == 1:
+            tid = tiles[(x, y)][0]
+            tile_ids[tid] = tile_ids[tid] + 1 if tid in tile_ids else 1
+    for tid in tile_ids:
+        if tile_ids[tid] == ids[tid]:
+            return tid
 
 # Tests
 def test(expected, actual):
