@@ -1,6 +1,6 @@
 import re
 
-# # Solution
+# Solution
 def part1(data):
     pattern = r'\#([0-9]+) \@ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)'
     tiles = {}
