@@ -24,16 +24,13 @@ def part2(data):
         for x in range(left, left + width):
             for y in range(top, top + height):
                 if (x, y) in tiles:
-                    if len(tiles[(x, y)]) == 1:
-                        ids[tiles[(x, y)][0]] = False
+                    ids[tiles[(x, y)]] = False
                     ids[id] = False
-                    tiles[(x, y)].append(id)
                 else:
-                    tiles[(x, y)] = [id]
+                    tiles[(x, y)] = id
     for tid in ids:
         if ids[tid]:
             return tid
-
 
 # Tests
 def test(expected, actual):
