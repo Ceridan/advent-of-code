@@ -20,21 +20,20 @@ def part2(data):
     for line in data:
         (id, left, top, width, height) = re.findall(pattern, line)[0]
         (id, left, top, width, height) = (int(id), int(left), int(top), int(width), int(height))
-        ids[id] = width * height
+        ids[id] = True
         for x in range(left, left + width):
             for y in range(top, top + height):
                 if (x, y) in tiles:
+                    if len(tiles[(x, y)]) == 1:
+                        ids[tiles[(x, y)][0]] = False
+                    ids[id] = False
                     tiles[(x, y)].append(id)
                 else:
                     tiles[(x, y)] = [id]
-    tile_ids = {}
-    for (x, y) in tiles:
-        if len(tiles[(x, y)]) == 1:
-            tid = tiles[(x, y)][0]
-            tile_ids[tid] = tile_ids[tid] + 1 if tid in tile_ids else 1
-    for tid in tile_ids:
-        if tile_ids[tid] == ids[tid]:
+    for tid in ids:
+        if ids[tid]:
             return tid
+
 
 # Tests
 def test(expected, actual):
