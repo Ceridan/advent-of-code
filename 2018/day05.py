@@ -13,15 +13,15 @@ def part1(data):
     return current_len    
 
 def part2(data):   
-    current_length = sys.maxsize
+    current_len = sys.maxsize
     for i in range(26):
         tmp = data
         tmp = tmp.replace(chr(i + 65), '')
         tmp = tmp.replace(chr(i + 97), '')
-        tmp_length = part1(tmp)
-        if (tmp_length < current_length):
-            current_length = tmp_length
-    return current_length
+        tmp_len = part1(tmp)
+        if (tmp_len < current_len):
+            current_len = tmp_len
+    return current_len
 
 # Tests
 def test(expected, actual):
