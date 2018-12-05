@@ -54,6 +54,9 @@ def test(expected, actual):
 test(10, part1('dabAcCaCBAcCcaDA'))
 test(4, part2('dabAcCaCBAcCcaDA'))
 
+test(10, part1_naive('dabAcCaCBAcCcaDA'))
+test(4, part2_naive('dabAcCaCBAcCcaDA'))
+
 # Solve real puzzle 
 filename = 'data/day05.txt'
 data = [line.rstrip('\n') for line in open(filename, 'r')][0]
