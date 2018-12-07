@@ -90,7 +90,7 @@ class NamedPoint(Point):
         self.dist = dist
         super(NamedPoint, self).__init__(x, y)
 
-# Test
+# Tests
 def test(expected, actual):
     assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
 
