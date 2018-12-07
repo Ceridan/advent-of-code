@@ -30,7 +30,7 @@ def part2(data, workers_count, base_step_time):
         for step in ready_steps:
             if workers_pool == 0:
                 break
-            if len(list(filter(lambda x: x[0] == step, steps_in_progress))) > 0:
+            if len([x for (x, y) in steps_in_progress if x == step]) > 0:
                 continue
             steps_in_progress.append((step, base_step_time + ord(step) - 64))
             workers_pool -= 1        
@@ -39,7 +39,7 @@ def part2(data, workers_count, base_step_time):
         for step in steps_in_progress:
             if step[1] == 0:
                 del_step(step[0], steps)
-        steps_in_progress = list(filter(lambda x: x[1] > 0, steps_in_progress))
+        steps_in_progress = [step for step in steps_in_progress if step[1] > 0]
         time += min_time
         workers_pool = workers_count - len(steps_in_progress)
     return time
