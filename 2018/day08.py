@@ -9,7 +9,7 @@ def part1(data):
             continue
         m = next(gen)
         while m > 0 or len(stack) > 0:
-            for j in range(m):
+            for _ in range(m):
                 meta_sum += next(gen)
             m = stack.pop() if len(stack) > 0 else 0
             node = stack.pop() - 1 if len(stack) > 0 else 0
