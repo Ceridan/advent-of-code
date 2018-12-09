@@ -22,18 +22,16 @@ def part2(data, multiplier):
 class DoubleLinkedList:
     def __init__(self, initial_value):
         initial_node = DoubleLinkedListNode(initial_value)
-        self.current = initial_node
         initial_node.prev = initial_node
         initial_node.next = initial_node
+        self.current = initial_node
     
     def add_node(self, node_value):
-        new_node = DoubleLinkedListNode(node_value)
         left = self.current.next
         right = self.current.next.next
+        new_node = DoubleLinkedListNode(node_value, left, right)
         left.next = new_node
         right.prev = new_node
-        new_node.prev = left
-        new_node.next = right
         self.current = new_node
 
     def remove_node(self):
