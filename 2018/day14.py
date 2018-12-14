@@ -1,3 +1,5 @@
+from collections import deque
+
 # Solution
 def part1(data):
     skill_cap = data
@@ -19,7 +21,22 @@ def part1(data):
     return result
 
 def part2(data):
-    pass
+    skill_cap = data
+    recipes = RecipesLinkedList(3, 7)
+    skill_cap_sequence = deque()
+    for c in str(skill_cap):
+        skill_cap_sequence.append(int(c))    
+    skill_cap_len = len(str(skill_cap))
+    while True:
+        (node1, node2) = recipes.generate_new_recipes()
+        if node1 is not None:
+            recipes.sequence_append(node1, skill_cap, skill_cap_len)
+            if recipes.current_sequence == skill_cap_sequence:
+                return recipes.skill - skill_cap_len            
+        recipes.sequence_append(node2, skill_cap, skill_cap_len)
+        if recipes.current_sequence == skill_cap_sequence:
+            return recipes.skill - skill_cap_len
+        recipes.move_current()
 
 class RecipesLinkedList:
     def __init__(self, value1, value2):
@@ -33,6 +50,7 @@ class RecipesLinkedList:
         self.tail = node2
         self.skill = 2
         self.skill_node = None
+        self.current_sequence = deque([value1, value2])
     
     def generate_new_recipes(self):
         new_value = self.current1.value + self.current2.value
@@ -49,6 +67,12 @@ class RecipesLinkedList:
         self.skill += 1
         if self.skill == skill_cap:
             self.skill_node = node
+    
+    def sequence_append(self, node, skill_cap, skill_cap_len):
+        self.append(node, skill_cap)
+        if len(self.current_sequence) == skill_cap_len:
+            self.current_sequence.popleft()
+        self.current_sequence.append(node.value)
 
     def move_current(self):
         for _ in range(self.current1.value + 1):
@@ -70,14 +94,14 @@ test('5158916779', part1(9))
 test('9251071085', part1(18))
 test('5941429882', part1(2018))
 
-# test(5, part2('01245'))
-# test(9, part2('51589'))
-# test(18, part2('92510'))
-# test(2018, part2('59414'))
+test(5, part2('01245'))
+test(9, part2('51589'))
+test(18, part2('92510'))
+test(2018, part2('59414'))
 
 # Solve real puzzle
 filename = 'data/day14.txt'
 data = int([line.rstrip('\n') for line in open(filename, 'r')][0])
 
 print('Day 14, part 1: %r' % (part1(data)))
-# print('Day 14, part 2: %r' % (part2(data)))
+print('Day 14, part 2: %r' % (part2(data)))
