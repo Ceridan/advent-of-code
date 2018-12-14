@@ -1,89 +1,39 @@
-from collections import deque
-
 # Solution
 def part1(data):
     skill_cap = data
-    recipes = RecipesLinkedList(3, 7)
+    recipes = [3, 7]
+    cur1 = 0
+    cur2 = 1
     k = 0
-    while k < 10:
-        (node1, node2) = recipes.generate_new_recipes()
-        if node1 is not None:
-            recipes.append(node1, skill_cap)
-        recipes.append(node2, skill_cap)
-        recipes.move_current()
-        if recipes.skill_node is not None:
+    while k < skill_cap + 10:
+        val = recipes[cur1] + recipes[cur2]
+        if val > 9:
+            recipes.append(int(val / 10))
             k += 1
-    result = ''
-    current = recipes.skill_node.next
-    for _ in range(10):      
-        result += str(current.value)
-        current = current.next
-    return result
+        recipes.append(val % 10)
+        k += 1
+        cur1 = (cur1 + recipes[cur1] + 1) % len(recipes)
+        cur2 = (cur2 + recipes[cur2] + 1) % len(recipes)
+    return ''.join(str(x) for x in recipes[skill_cap:skill_cap + 10])
 
 def part2(data):
     skill_cap = data
-    recipes = RecipesLinkedList(3, 7)
-    skill_cap_sequence = deque()
-    for c in str(skill_cap):
-        skill_cap_sequence.append(int(c))    
-    skill_cap_len = len(str(skill_cap))
+    recipes = [3, 7]
+    cur1 = 0
+    cur2 = 1
+    skill_array = [int(c) for c in str(skill_cap)]
+    l = len(skill_array)
     while True:
-        (node1, node2) = recipes.generate_new_recipes()
-        if node1 is not None:
-            recipes.sequence_append(node1, skill_cap, skill_cap_len)
-            if recipes.current_sequence == skill_cap_sequence:
-                return recipes.skill - skill_cap_len            
-        recipes.sequence_append(node2, skill_cap, skill_cap_len)
-        if recipes.current_sequence == skill_cap_sequence:
-            return recipes.skill - skill_cap_len
-        recipes.move_current()
-
-class RecipesLinkedList:
-    def __init__(self, value1, value2):
-        node1 = RecipeNode(value1)
-        node2 = RecipeNode(value2)
-        node1.next = node2
-        node2.next = node1
-        self.current1 = node1
-        self.current2 = node2
-        self.head = node1
-        self.tail = node2
-        self.skill = 2
-        self.skill_node = None
-        self.current_sequence = deque([value1, value2])
-    
-    def generate_new_recipes(self):
-        new_value = self.current1.value + self.current2.value
-        new_node1 = None
-        if new_value > 9:
-            new_node1 = RecipeNode(int(new_value / 10))
-        new_node2 = RecipeNode(new_value % 10)
-        return (new_node1, new_node2)
-
-    def append(self, node, skill_cap):       
-        self.tail.next = node
-        node.next = self.head
-        self.tail = node
-        self.skill += 1
-        if self.skill == skill_cap:
-            self.skill_node = node
-    
-    def sequence_append(self, node, skill_cap, skill_cap_len):
-        self.append(node, skill_cap)
-        if len(self.current_sequence) == skill_cap_len:
-            self.current_sequence.popleft()
-        self.current_sequence.append(node.value)
-
-    def move_current(self):
-        for _ in range(self.current1.value + 1):
-            self.current1 = self.current1.next
-        for _ in range(self.current2.value + 1):
-            self.current2 = self.current2.next    
-
-class RecipeNode:
-    def __init__(self, value, next = None):
-        self.value = value
-        self.next = next
+        val = recipes[cur1] + recipes[cur2]
+        if val > 9:
+            recipes.append(int(val / 10))
+            if skill_array == recipes[-l:]:
+                return len(recipes) - l
+        recipes.append(val % 10)
+        if skill_array == recipes[-l:]:
+            return len(recipes) - l
+        cur1 = (cur1 + recipes[cur1] + 1) % len(recipes)
+        cur2 = (cur2 + recipes[cur2] + 1) % len(recipes)
 
 # Tests
 def test(expected, actual):
