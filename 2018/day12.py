@@ -6,21 +6,20 @@ def part1(data, generation_number):
     offset = 4
     for _ in range(generation_number):
         state, offset = calculate_new_state(state, rules, offset)
-    pots_sum = 0
-    for i in range(len(state)):
-        if state[i] == '#':
-            pots_sum += i - offset
+    pots_sum = sum(i - offset for i in range(len(state)) if state[i] == '#')
     return pots_sum
 
-def part2(data, generation_number, stable_modifier):
+def part2(data, generation_number):
     state, rules = parse_data(data)
     offset = 4
-    for _ in range(stable_modifier):
-        state, offset = calculate_new_state(state, rules, offset)
-    pots_sum = 0
-    for i in range(len(state)):
-        if state[i] == '#':
-            pots_sum += i - offset + generation_number - stable_modifier
+    k = 0
+    while True:
+        new_state, new_offset = calculate_new_state(state, rules, offset)
+        if new_state.strip('.') == state.strip('.'):
+            break
+        state, offset = new_state, new_offset
+        k += 1
+    pots_sum = sum(i - offset + generation_number - k for i in range(len(state)) if state[i] == '#')
     return pots_sum
 
 def calculate_new_state(state, rules, offset):
@@ -74,4 +73,4 @@ filename = 'data/day12.txt'
 data = [line.rstrip('\n') for line in open(filename, 'r')]
 
 print('Day 12, part 1: %r' % (part1(data, 20)))
-print('Day 12, part 2: %r' % (part2(data, 50000000000, 200)))
+print('Day 12, part 2: %r' % (part2(data, 50000000000)))
