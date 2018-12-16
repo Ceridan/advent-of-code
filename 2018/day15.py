@@ -5,9 +5,8 @@ def part1(data):
     board, goblins, elves = init_board(data)
     rounds = 0
     while len(goblins) > 0 and len(elves) > 0:
-        if rounds < 10:
-            print(rounds)
-            print_board(data, goblins, elves)
+        print(rounds)
+        print_board(data, goblins, elves)
         current_units = list(goblins.keys()) + list(elves.keys())
         current_units.sort(key=lambda x: (x[1], x[0]))       
         for unit_coords in current_units:   
