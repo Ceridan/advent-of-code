@@ -47,16 +47,19 @@ def unit_next_step(unit_coords, allies, enemies, board):
     if len(target_tiles) == 0:
         return unit_coords
     tiles = deque([(unit_coords[0], unit_coords[1], 0)])
-    unit_map = { (unit_coords[0], unit_coords[1]): 0 }
+    unit_map = { (unit_coords[0], unit_coords[1]): (0, None) }
     while len(tiles) > 0:
         x, y, d = tiles.popleft()
         steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
         for step in steps:
             if step in target_tiles and (target_tiles[step] is None or target_tiles[step] > d + 1):
                 target_tiles[step] = d + 1
-            if step in board and (step not in unit_map or unit_map[step] > d + 1) and step not in allies and step not in enemies:
-                tiles.append((step[0], step[1], d + 1))
-                unit_map[(step[0], step[1])] = d + 1
+            if step in board and (step not in unit_map or unit_map[step][0] >= d + 1) and step not in allies and step not in enemies:
+                if step not in unit_map or unit_map[step][0] > d + 1:
+                    tiles.append((step[0], step[1], d + 1))
+                    unit_map[(step[0], step[1])] = (d + 1, (x, y))    
+                elif step[1] < unit_map[step][1][1] or (step[1] == unit_map[step][1][1] and step[0] < unit_map[step][1][0]):                     
+                    unit_map[step] = (d + 1, (x, y))
     tt = [x for x in target_tiles.values() if x is not None] 
     if len(tt) == 0:
         return unit_coords
@@ -64,19 +67,12 @@ def unit_next_step(unit_coords, allies, enemies, board):
     targets = [x for x in target_tiles if target_tiles[x] == m]
     targets.sort(key=lambda x: (x[1], x[0]))
     p = targets[0]
-    return backward(p, m, unit_map)
+    return backward(p, unit_map)
 
-def backward(start_point, starting_distance, unit_map):
-    dist = starting_distance
+def backward(start_point, unit_map):
     current = start_point
-    while dist > 1:
-        x, y = current
-        steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
-        for step in steps:
-            if step in unit_map and unit_map[step] == dist - 1:
-                current = step
-                dist -= 1
-                break
+    while unit_map[current][0] > 1:
+        current = unit_map[current][1]
     return current
 
 def check_fight(unit_coords, enemies):
