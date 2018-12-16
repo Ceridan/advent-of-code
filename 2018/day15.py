@@ -3,6 +3,19 @@ from collections import deque
 # Solution
 def part1(data):
     board, goblins, elves = init_board(data)
+    outcome = calculate_battle_outcome(board, goblins, elves)
+    return outcome
+                
+def part2(data):
+    elf_damage = 3
+    while True:
+        board, goblins, elves = init_board(data, elf_damage = elf_damage)
+        outcome = calculate_battle_outcome(board, goblins, elves, exit_on_elf_death = True)
+        if outcome:
+            return outcome
+        elf_damage += 1
+
+def calculate_battle_outcome(board, goblins, elves, exit_on_elf_death = False):
     rounds = 0
     while len(goblins) > 0 and len(elves) > 0:
         current_units = list(goblins.keys()) + list(elves.keys())
@@ -19,14 +32,14 @@ def part1(data):
             unit = allies.pop(unit_coords)
             step = next_step(unit_coords, allies, enemies, board)
             unit_coords = step
+            killed_count_before_attack = len(killed)
             try_attack(unit_coords, unit, enemies, killed)
+            if exit_on_elf_death and unit.type == 'G' and len(killed) > killed_count_before_attack:
+                return False
             allies[unit_coords] = unit
         rounds += 1
     hits = sum(goblins[x].hits for x in goblins) + sum(elves[x].hits for x in elves)
     return rounds * hits
-                
-def part2(data):
-    pass
 
 def try_attack(unit_coords, unit, enemies, killed):
     enemy_coords = check_fight(unit_coords, enemies)
@@ -74,7 +87,7 @@ def next_step(unit_coords, allies, enemies, board):
         queue = new_queue
     return unit_coords
 
-def init_board(data):
+def init_board(data, elf_damage = 3, goblin_damage = 3):
     board = {}
     goblins = {}
     elves = {}
@@ -83,9 +96,9 @@ def init_board(data):
             if data[y][x] == '#':
                 continue
             if data[y][x] in 'G':
-                goblins[(x, y)] = Unit(data[y][x])
+                goblins[(x, y)] = Unit(data[y][x], goblin_damage)
             elif data[y][x] in 'E':
-                elves[(x, y)] = Unit(data[y][x])                
+                elves[(x, y)] = Unit(data[y][x], elf_damage)                
             board[(x, y)] = []
             if x - 1 >= 0 and data[y][x - 1] != '#': board[(x, y)].append((x - 1, y))
             if x + 1 < len(data[y]) and data[y][x + 1] != '#': board[(x, y)].append((x + 1, y))
@@ -113,10 +126,10 @@ def print_board(data, goblins, elves):
         print(line)
 
 class Unit:
-    def __init__(self, unit_type):
+    def __init__(self, unit_type, damage):
         self.type = unit_type
         self.hits = 200
-        self.damage = 3
+        self.damage = damage
 
 # Tests
 def test(expected, actual):
@@ -179,9 +192,57 @@ test(18740, part1([
     '#########',
 ]))
 
+test(4988, part2([
+    '#######',   
+    '#.G...#',
+    '#...EG#',
+    '#.#.#G#',
+    '#..G#E#',
+    '#.....#',   
+    '#######',
+]))
+test(31284, part2([
+    '#######',
+    '#E..EG#',
+    '#.#G.E#',
+    '#E.##E#',
+    '#G..#.#',
+    '#..E#.#',
+    '#######',
+]))
+test(3478, part2([
+    '#######',
+    '#E.G#.#',
+    '#.#G..#',
+    '#G.#.G#',
+    '#G..#.#',
+    '#...E.#',
+    '#######',
+]))
+test(6474, part2([
+    '#######',
+    '#.E...#',
+    '#.#..G#',
+    '#.###.#',
+    '#E#G#G#',
+    '#...#G#',
+    '#######',
+]))
+test(1140, part2([
+    '#########',
+    '#G......#',
+    '#.E.#...#',
+    '#..##..G#',
+    '#...##..#',
+    '#...#...#',
+    '#.G...G.#',
+    '#.....G.#',
+    '#########',
+]))
+
 # Solve real puzzle
 filename = 'data/day15.txt'
 data = [line.rstrip('\n') for line in open(filename, 'r')]
 
 print('Day 15, part 1: %r' % (part1(data)))
-# print('Day 15, part 2: %r' % (part2(data)))
+print('Day 15, part 2: %r' % (part2(data)))
