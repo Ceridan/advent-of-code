@@ -5,6 +5,7 @@ def part1(data):
     board, goblins, elves = init_board(data)
     rounds = 0
     while len(goblins) > 0 and len(elves) > 0:
+        # if rounds < 20:
         print(rounds)
         print_board(data, goblins, elves)
         current_units = list(goblins.keys()) + list(elves.keys())
@@ -19,7 +20,11 @@ def part1(data):
                 break                     
             unit = allies.pop(unit_coords)
             if not try_attack(unit_coords, unit, enemies):
-                step = unit_next_step(unit_coords, allies, enemies, board)
+                step = next_step(unit_coords, allies, enemies, board)
+                # if rounds <=15:
+                #     print(unit_coords,step)
+                # else:
+                #     return
                 unit_coords = step
                 try_attack(unit_coords, unit, enemies)
             allies[unit_coords] = unit
@@ -34,58 +39,12 @@ def part2(data):
 
 def try_attack(unit_coords, unit, enemies):
     enemy_coords = check_fight(unit_coords, enemies)
-    if enemy_coords is not None:
-        enemies[enemy_coords].hits -= unit.damage
-        if enemies[enemy_coords].hits <= 0:
-            enemies.pop(enemy_coords)
-        return True
-    return False
-
-def unit_next_step(unit_coords, allies, enemies, board):
-    target_tiles = get_target_tiles(allies, enemies, board)
-    if len(target_tiles) == 0:
-        return unit_coords
-    units = {}
-    units.update(allies)
-    units.update(enemies)
-    tile_map = create_tile_map(unit_coords, board, units)
-    min_dist = None
-    for tile in target_tiles:
-        if tile in tile_map:
-            target_tiles[tile] = tile_map[tile]
-            if min_dist is None or min_dist > tile_map[tile]:
-                min_dist = tile_map[tile]
-    if min_dist is None:
-        return unit_coords
-    targets = [x for x in target_tiles if target_tiles[x] == min_dist]
-    targets.sort(key=lambda x: (x[1], x[0]))
-    target_point = targets[0]
-    target_point_tile_map = create_tile_map(target_point, board, units)
-    return calculate_best_path(unit_coords, target_point, target_point_tile_map)
-
-def calculate_best_path(current, target, target_map):
-    x, y = current
-    dist = None
-    best_step = current
-    steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
-    for step in steps:
-        if step in target_map:
-            if dist is None or dist > target_map[step]:
-                best_step = step
-                dist = target_map[step]
-    return best_step
-
-def create_tile_map(tile, board, units):
-    tiles = deque([(tile[0], tile[1], 0)])
-    tile_map = { tile: 0 }
-    while len(tiles) > 0:
-        x, y, d = tiles.popleft()
-        steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
-        for step in steps:
-            if step in board and (step not in tile_map or tile_map[step] > d + 1) and step not in units:
-                tile_map[step] = d + 1
-                tiles.append((step[0], step[1], d + 1))
-    return tile_map
+    if enemy_coords is None:
+        return False
+    enemies[enemy_coords].hits -= unit.damage
+    if enemies[enemy_coords].hits <= 0:
+        enemies.pop(enemy_coords)
+    return True
 
 def check_fight(unit_coords, enemies):
     x, y = unit_coords
@@ -98,15 +57,86 @@ def check_fight(unit_coords, enemies):
             current_step = step
     return current_step
 
-def get_target_tiles(allies, enemies, board):
-    target_tiles = {}
-    for unit_coords in enemies:
-        x, y = unit_coords
-        steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
-        for step in steps:
-            if step in board and step not in allies and step not in enemies:
-                target_tiles[step] = None  
-    return target_tiles
+def next_step(unit_coords, allies, enemies, board):
+    step_map = { unit_coords: [] }
+    queue = deque([unit_coords])
+    while len(queue) > 0:
+        possible_solution = []
+        new_queue = deque()
+        while len(queue) > 0:
+            x, y = queue.popleft()
+            path = step_map[(x, y)]
+            steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
+            for step in steps:
+                if step not in board or step in allies or step in step_map:
+                    continue
+                if step in enemies:
+                    solution = [(x, y), path[1]] if len(path) > 1 else [(x, y), (x, y)]
+                    possible_solution.append(solution)
+                else:
+                    new_queue.append(step)
+                    step_map[step] = path + [(x, y)]
+        if len(possible_solution) > 0:
+            possible_solution.sort(key = lambda x: (x[0][1], x[0][0], x[1][1], x[1][0]))
+            return possible_solution[0][1]
+        queue = new_queue
+    return unit_coords
+
+# def unit_next_step(unit_coords, allies, enemies, board):
+#     target_tiles = get_target_tiles(allies, enemies, board)
+#     if len(target_tiles) == 0:
+#         return unit_coords
+#     units = {}
+#     units.update(allies)
+#     units.update(enemies)
+#     tile_map = create_tile_map(unit_coords, board, units)
+#     min_dist = None
+#     for tile in target_tiles:
+#         if tile in tile_map:
+#             target_tiles[tile] = tile_map[tile]
+#             if min_dist is None or min_dist > tile_map[tile]:
+#                 min_dist = tile_map[tile]
+#     if min_dist is None:
+#         return unit_coords
+#     targets = [x for x in target_tiles if target_tiles[x] == min_dist]
+#     targets.sort(key=lambda x: (x[1], x[0]))
+#     target_point = targets[0]
+#     target_point_tile_map = create_tile_map(target_point, board, units)
+#     return calculate_best_path(unit_coords, target_point, target_point_tile_map)
+
+# def calculate_best_path(current, target, target_map):
+#     x, y = current
+#     dist = None
+#     best_step = current
+#     steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
+#     for step in steps:
+#         if step in target_map:
+#             if dist is None or dist > target_map[step]:
+#                 best_step = step
+#                 dist = target_map[step]
+#     return best_step
+
+# def create_tile_map(tile, board, units):
+#     tiles = deque([(tile[0], tile[1], 0)])
+#     tile_map = { tile: 0 }
+#     while len(tiles) > 0:
+#         x, y, d = tiles.popleft()
+#         steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
+#         for step in steps:
+#             if step in board and (step not in tile_map or tile_map[step] > d + 1) and step not in units:
+#                 tile_map[step] = d + 1
+#                 tiles.append((step[0], step[1], d + 1))
+#     return tile_map
+
+# def get_target_tiles(allies, enemies, board):
+#     target_tiles = {}
+#     for unit_coords in enemies:
+#         x, y = unit_coords
+#         steps = [(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
+#         for step in steps:
+#             if step in board and step not in allies and step not in enemies:
+#                 target_tiles[step] = None  
+#     return target_tiles
 
 def init_board(data):
     board = {}
