@@ -3,19 +3,19 @@ from collections import deque
 # Solution
 def part1(data):
     board, goblins, elves = init_board(data)
-    outcome = calculate_battle_outcome(board, goblins, elves)
+    outcome = calculate_battle_outcome(data, board, goblins, elves)
     return outcome
                 
 def part2(data):
     elf_damage = 3
     while True:
         board, goblins, elves = init_board(data, elf_damage = elf_damage)
-        outcome = calculate_battle_outcome(board, goblins, elves, exit_on_elf_death = True)
+        outcome = calculate_battle_outcome(data, board, goblins, elves, exit_on_elf_death = True)
         if outcome:
             return outcome
         elf_damage += 1
 
-def calculate_battle_outcome(board, goblins, elves, exit_on_elf_death = False):
+def calculate_battle_outcome(data, board, goblins, elves, exit_on_elf_death = False):
     rounds = 0
     while len(goblins) > 0 and len(elves) > 0:
         current_units = list(goblins.keys()) + list(elves.keys())
