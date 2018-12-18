@@ -90,12 +90,8 @@ def read_data(data):
     return (clay_points, (x_min, y_min), (x_max, y_max))
 
 def print_board(board):
-    # filename = 'data/day17_output.txt'
-    # f = open(filename, 'w')
     for y in range(len(board)):
         print(''.join(board[y]))
-    #     f.write(''.join(board[y]) + '\n')
-    # f.close()
 
 # Tests
 def test(expected, actual):
