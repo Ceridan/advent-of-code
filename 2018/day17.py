@@ -3,14 +3,21 @@ from collections import deque
 
 # Solution
 def part1(data):
-    board, source_x = init_board(data)
-    fall_down((source_x, 1), board)
-    result = sum([sum([1 for x in range(len(board[y])) if board[y][x] in '|~']) for y in range(len(board))])
-    print_board(board)
+    result = calculate_spring_water(data, '|~')
     return result
 
 def part2(data):
-    pass
+    result = calculate_spring_water(data, '~')
+    return result
+
+def calculate_spring_water(data, water_tiles):
+    points, mn, mx = read_data(data)
+    board = init_board(points, mn, mx)
+    source_x = 500 - mn[0] + 1
+    board[0][source_x] = '+'
+    fall_down((source_x, 1), board)
+    result = sum([sum([1 for x in range(0, len(board[y])) if board[y][x] in water_tiles]) for y in range(mn[1], len(board))])
+    return result
 
 def fall_down(start_point, board):
     points = deque([(start_point)])
@@ -60,15 +67,13 @@ def fill_line(point, board):
         fall_down_points.append((rx, y))
     return fall_down_points
 
-def init_board(data):
-    points, mn, mx = read_data(data)
-    board = [[points[(x, y)] if (x, y) in points else '.' for x in range(mn[0] - 1, mx[0] + 2)] for y in range(mn[1], mx[1] + 1)]
-    source_x = 500 - mn[0] + 1
-    return (board, source_x)
+def init_board(points, mn, mx):
+    board = [[points[(x, y)] if (x, y) in points else '.' for x in range(mn[0] - 1, mx[0] + 2)] for y in range(0, mx[1] + 1)]
+    return board
 
 def read_data(data):
     pattern = r'(x|y)=([0-9]+), (x|y)=([0-9]+)\.\.([0-9]+)'
-    clay_points = { (500, 0): '+' }
+    clay_points = {}
     for line in data:
         c1, v1, _, v21, v22 = re.findall(pattern, line)[0]
         v1, v21, v22 = int(v1), int(v21), int(v22)
@@ -80,13 +85,17 @@ def read_data(data):
                 clay_points[(x, v1)] = '#'
     x_min = min(x[0] for x in clay_points.keys())
     x_max = max(x[0] for x in clay_points.keys())
-    y_min = 0
+    y_min = min(y[1] for y in clay_points.keys())
     y_max = max(y[1] for y in clay_points.keys())
     return (clay_points, (x_min, y_min), (x_max, y_max))
 
 def print_board(board):
+    # filename = 'data/day17_output.txt'
+    # f = open(filename, 'w')
     for y in range(len(board)):
         print(''.join(board[y]))
+    #     f.write(''.join(board[y]) + '\n')
+    # f.close()
 
 # Tests
 def test(expected, actual):
@@ -103,9 +112,20 @@ test(57, part1([
     'y=13, x=498..504',
 ]))
 
+test(29, part2([
+    'x=495, y=2..7',
+    'y=7, x=495..501',
+    'x=501, y=3..7',
+    'x=498, y=2..4',
+    'x=506, y=1..2',
+    'x=498, y=10..13',
+    'x=504, y=10..13',
+    'y=13, x=498..504',
+]))
+
 # Solve real puzzle 
 filename = 'data/day17.txt'
 data = [line.rstrip('\n') for line in open(filename, 'r')]
 
 print('Day 17, part 1: %r' % (part1(data)))
-# print('Day 17, part 2: %r' % (part2(data)))
+print('Day 17, part 2: %r' % (part2(data)))
