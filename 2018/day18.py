@@ -7,8 +7,23 @@ def part1(data, size, minutes):
     lumberyards = sum([sum([1 for x in range(1, len(board[y]) - 1) if board[y][x][0] == '#']) for y in range(1, len(board) - 1)])
     return trees * lumberyards
 
-def part2(data, size, minutes):
-    pass
+def part2(data, size, minutes, stable_modifier):
+    board = init_board(data, size)
+    tiles = {}
+    for i in range(minutes):
+        tile_transform(board)
+        trees = sum([sum([1 for x in range(1, len(board[y]) - 1) if board[y][x][0] == '|']) for y in range(1, len(board) - 1)])
+        lumberyards = sum([sum([1 for x in range(1, len(board[y]) - 1) if board[y][x][0] == '#']) for y in range(1, len(board) - 1)])
+        mult = trees * lumberyards      
+        if mult in tiles:
+            tiles[mult].append(i)
+            if len(tiles[mult]) == stable_modifier + 1:
+                step = tiles[mult][stable_modifier] - tiles[mult][stable_modifier - 1]
+                for t in list(tiles.keys()):
+                    if len(tiles[t]) >= stable_modifier and ((minutes - 1 - tiles[t][stable_modifier - 1]) % step) == 0:
+                        return t
+        else:
+            tiles[mult] = [i]
 
 def tile_transform(board):
     for y in range(1, len(board) - 1):
@@ -69,4 +84,4 @@ filename = 'data/day18.txt'
 data = [line.rstrip('\n') for line in open(filename, 'r')]
 
 print('Day 18, part 1: %r' % (part1(data, (50, 50), 10)))
-print('Day 18, part 2: %r' % (part2(data, (50, 50), 1000000000)))
+print('Day 18, part 2: %r' % (part2(data, (50, 50), 1000000000, stable_modifier = 4)))
