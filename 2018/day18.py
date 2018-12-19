@@ -28,10 +28,8 @@ def part2(data, size, minutes, stable_modifier):
 def tile_transform(board):
     for y in range(1, len(board) - 1):
         for x in range(1, len(board[0]) - 1):
-            board[y][x][1] = board[y][x][0]            
-    for y in range(1, len(board) - 1):
-        for x in range(1, len(board[0]) - 1):
-            trees, lumberyards, _ = calculate_adjacent((x, y), board)
+            board[y][x][1] = board[y][x][0]
+            trees, lumberyards = calculate_adjacent((x, y), board)
             if board[y][x][0] == '.' and trees >= 3:
                board[y][x][0] = '|'
             elif board[y][x][0] == '|' and lumberyards >= 3:
@@ -41,10 +39,18 @@ def tile_transform(board):
 
 def calculate_adjacent(tile_coords, board):
     x, y = tile_coords
-    trees = sum([sum([1 for ix in range(x - 1, x + 2) if (ix, iy) != (x, y) and board[iy][ix][1] == '|']) for iy in range(y - 1, y + 2)])
-    lumberyards = sum([sum([1 for ix in range(x - 1, x + 2) if (ix, iy) != (x, y) and board[iy][ix][1] == '#']) for iy in range(y - 1, y + 2)]) 
-    empty = 8 - trees - lumberyards
-    return (trees, lumberyards, empty)    
+    trees = 0
+    lumberyards = 0
+    for iy in range(y - 1, y + 2):
+        for ix in range(x - 1, x + 2):
+            if (ix, iy) == (x, y):
+                continue
+            pos = 1 if iy < y or (iy == y and ix < x) else 0
+            if board[iy][ix][pos] == '|':
+                trees += 1
+            if board[iy][ix][pos] == '#':
+                lumberyards += 1                
+    return (trees, lumberyards)    
 
 def init_board(data, size):
     board = [[['-', '-'] for x in range(0, size[0] + 2)] for y in range(0, size[1] + 2)]
