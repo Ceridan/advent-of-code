@@ -1,5 +1,6 @@
 import re
 
+
 # Solution
 def part1(data):
     return process_find_divisors_algorithm(data)
