@@ -1,19 +1,18 @@
 import re
 
-
 # Solution
 def part1(data):
-    return process_commands_optimized(data)
+    return process_find_divisors_algorithm(data)
 
 
 def part2(data):
-    return process_commands_optimized(data, [1, 0, 0, 0, 0, 0])
+    return process_find_divisors_algorithm(data, [1, 0, 0, 0, 0, 0])
 
 
 def process_commands_naive(data, initial_state=None):
     ip, commands = read_data(data)
     cpu = CPU(initial_state)
-    ip_value = 0    
+    ip_value = 0
     while ip_value < len(commands):
         op, ra, rb, rc = commands[ip_value]
         cpu.registers[ip] = ip_value
@@ -22,19 +21,29 @@ def process_commands_naive(data, initial_state=None):
     return cpu.registers[0]
 
 
-def process_commands_optimized(data, initial_state=None):
+def process_find_divisors_algorithm(data, initial_state=None):
     ip, commands = read_data(data)
     cpu = CPU(initial_state)
     ip_value = 0
+    prev_ip_value = 0
+    ip_sequence = []
+    prev_ip_sequence = []
     while ip_value < len(commands):
         op, ra, rb, rc = commands[ip_value]
-        # print(ip_value, cpu.registers)
-        if op == 'gtrr' and cpu.registers[ra] < cpu.registers[rb]:
-            cpu.registers[ra] = cpu.registers[rb]
         cpu.registers[ip] = ip_value
         cpu.commands[op](ra, rb, rc)
         ip_value = cpu.registers[ip] + 1
-    return cpu.registers[0]    
+        if ip_value < prev_ip_value:
+            if ip_sequence == prev_ip_sequence:
+                break
+            prev_ip_sequence = ip_sequence[:]
+            ip_sequence = []
+        else:
+            ip_sequence.append(ip_value)
+            prev_ip_value = ip_value
+    mx = max(cpu.registers)
+    div_sum = sum(x for x in range(1, mx + 1) if mx % x == 0)    
+    return div_sum   
 
 
 def read_data(data):
@@ -140,7 +149,7 @@ def test(expected, actual):
     assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
 
 
-test(6, part1([
+test(6, process_commands_naive([
     '#ip 0',
     'seti 5 0 1',
     'seti 6 0 2',
