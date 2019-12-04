@@ -65,5 +65,5 @@ test(410, part2(['R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51', 'U98,R91,D20,R16
 file_path = os.path.abspath('data/day03.txt')
 input_data = [line.rstrip('\n') for line in open(file_path, 'r')]
 
-print('Day 01, part 1: %r' % (part1(input_data)))
-print('Day 01, part 2: %r' % (part2(input_data)))
+print('Day 03, part 1: %r' % (part1(input_data)))
+print('Day 03, part 2: %r' % (part2(input_data)))
