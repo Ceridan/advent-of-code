@@ -12,7 +12,8 @@ def part2(data):
 
 def digit_loop(data, validation_rule):
     bounds = data.split('-')
-    passwords = dict()
+    lbound, rbound = int(bounds[0]), int(bounds[1])
+    count = 0
     for a in range(int(bounds[0][0]), 10):
         if a > int(bounds[1][0]): break
         for b in range(a, 10):
@@ -27,11 +28,9 @@ def digit_loop(data, validation_rule):
                             if f < e: continue
                             if validation_rule(a, b, c, d, e, f):
                                 value = a * 100000 + b * 10000 + c * 1000 + d * 100 + e * 10 + f
-                                passwords[value] = True
-    lbound = int(bounds[0])
-    rbound = int(bounds[1])
-    result = len([x for x in passwords.keys() if lbound <= x <= rbound])
-    return result
+                                if lbound <= value <= rbound:
+                                    count += 1
+    return count
 
 
 def range_rule_1(a, b, c, d, e, f):
