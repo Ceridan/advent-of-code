@@ -33,20 +33,34 @@ def parse_line(line, grid, value):
             next_current = (x, y - int(path[1:]))
         elif direction == 'L':
             next_current = (x - int(path[1:]), y)
-        fill_grid(grid, current, next_current, value, steps)
-        steps += abs(next_current[0] - current[0]) + abs(next_current[1] - current[1])
+        steps = fill_grid(grid, current, next_current, value, steps)
         current = next_current
 
 
 def fill_grid(grid, start, end, value, steps):
-    for x in range(min(start[0], end[0]), max(start[0], end[0]) + 1):
-        for y in range(min(start[1], end[1]), max(start[1], end[1]) + 1):
-            current_steps = steps + abs(x - start[0]) + abs(y - start[1])
-            if (x, y) not in grid:
-                grid[(x, y)] = [value, current_steps]
-            elif (grid[(x, y)][0] & value) == 0:
-                grid[(x, y)][0] |= value
-                grid[(x, y)][1] += current_steps
+    for (x, y) in generate_steps(start, end):
+        steps += 1
+        if (x, y) not in grid:
+            grid[(x, y)] = [value, steps]
+        elif (grid[(x, y)][0] & value) == 0:
+            grid[(x, y)][0] |= value
+            grid[(x, y)][1] += steps
+    return steps
+
+
+def generate_steps(start, end):
+    if start[0] == end[0]:
+        step = 1 if end[1] - start[1] > 0 else -1
+        y = start[1]
+        while y != end[1]:
+            y += step
+            yield (start[0], y)
+    elif start[1] == end[1]:
+        step = 1 if end[0] - start[0] > 0 else -1
+        x = start[0]
+        while x != end[0]:
+            x += step
+            yield (x, start[1])
 
 
 # Tests

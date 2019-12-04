@@ -3,14 +3,14 @@ import os
 
 # Solution
 def part1(data):
-    return digit_loop(data, 1)
+    return digit_loop(data, range_rule_1)
 
 
 def part2(data):
-    return digit_loop(data, 2)
+    return digit_loop(data, range_rule_2)
 
 
-def digit_loop(data, validation_rule_number):
+def digit_loop(data, validation_rule):
     bounds = data.split('-')
     passwords = dict()
     for a in range(int(bounds[0][0]), 10):
@@ -25,8 +25,7 @@ def digit_loop(data, validation_rule_number):
                         if e < d: continue
                         for f in range(e, 10):
                             if f < e: continue
-                            if (validation_rule_number == 1 and range_rule_1(a, b, c, d, e, f)) \
-                                    or (validation_rule_number == 2 and range_rule_2(a, b, c, d, e, f)):
+                            if validation_rule(a, b, c, d, e, f):
                                 value = a * 100000 + b * 10000 + c * 1000 + d * 100 + e * 10 + f
                                 passwords[value] = True
     lbound = int(bounds[0])
