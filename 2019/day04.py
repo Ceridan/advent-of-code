@@ -15,17 +15,13 @@ def digit_loop(data, validation_rule):
     lbound, rbound = int(bounds[0]), int(bounds[1])
     count = 0
     for a in range(int(bounds[0][0]), 10):
-        if a > int(bounds[1][0]): break
+        if a > int(bounds[1][0]):
+            break
         for b in range(a, 10):
-            if b < a: continue
             for c in range(b, 10):
-                if c < b: continue
                 for d in range(c, 10):
-                    if d < c: continue
                     for e in range(d, 10):
-                        if e < d: continue
                         for f in range(e, 10):
-                            if f < e: continue
                             if validation_rule(a, b, c, d, e, f):
                                 value = a * 100000 + b * 10000 + c * 1000 + d * 100 + e * 10 + f
                                 if lbound <= value <= rbound:
