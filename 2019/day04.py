@@ -55,7 +55,8 @@ test(0, part2('123444-123444'))
 test(1, part2('111122-111122'))
 
 # Solve real puzzle
-file_path = os.path.abspath('data/day04.txt')
+dir_path = os.path.dirname(__file__) 
+file_path = os.path.join(dir_path, 'data/day04.txt')
 input_data = [line.rstrip('\n') for line in open(file_path, 'r')][0]
 
 print('Day 04, part 1: %r' % (part1(input_data)))

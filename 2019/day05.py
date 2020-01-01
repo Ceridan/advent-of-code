@@ -118,7 +118,8 @@ test(1001, part2('3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,
 
 
 # Solve real puzzle
-file_path = os.path.abspath('data/day05.txt')
+dir_path = os.path.dirname(__file__) 
+file_path = os.path.join(dir_path, 'data/day05.txt')
 input_data = [line.rstrip('\n') for line in open(file_path, 'r')][0]
 
 print('Day 05, part 1: %r' % (part1(input_data, input_parameter=1)))

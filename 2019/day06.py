@@ -55,7 +55,8 @@ test(42, part1(['COM)B', 'B)C', 'C)D', 'D)E', 'E)F', 'B)G', 'G)H', 'D)I', 'E)J',
 test(4, part2(['COM)B', 'B)C', 'C)D', 'D)E', 'E)F', 'B)G', 'G)H', 'D)I', 'E)J', 'J)K', 'K)L', 'K)YOU', 'I)SAN']))
 
 # Solve real puzzle
-file_path = os.path.abspath('data/day06.txt')
+dir_path = os.path.dirname(__file__) 
+file_path = os.path.join(dir_path, 'data/day06.txt')
 input_data = [line.rstrip('\n') for line in open(file_path, 'r')]
 
 print('Day 06, part 1: %r' % (part1(input_data)))
