@@ -23,9 +23,9 @@ def part2(data, settings):
         for i in range(len(settings)):
             vals.append([x[i]])
             ampfs.append(execute_opcodes(data, vals[i]))
-        val = 0
-        k = 0
         try:
+            val = 0
+            k = 0
             while True:
                 vals[k].append(val)
                 val = next(ampfs[k])
