@@ -31,34 +31,32 @@ class IntCodeComputer:
         self.current_index = 0
         self.input_index = -1
         self.input = input
-        
 
     def get_opcode(self, index):
         if index in self.opcodes:
             return self.opcodes[index]
         return 0
 
-
     def set_opcode(self, index, value):
         self.opcodes[index] = value
-
 
     def add_input(self, param):
         self.input.append(param)
 
-    
     def read_input(self):
         self.input_index += 1
         return self.input[self.input_index]
-
 
     def run(self):
         while self.get_opcode(self.current_index) != 99:
             insturction = self.get_opcode(self.current_index)
             opcode, param_modes = self.get_opcode_and_param_modes(insturction)
-            p1 = self.get_param_position_by_mode(param_modes[0], self.current_index + 1) if len(param_modes) > 0 else 0
-            p2 = self.get_param_position_by_mode(param_modes[1], self.current_index + 2) if len(param_modes) > 1 else 0
-            p3 = self.get_param_position_by_mode(param_modes[2], self.current_index + 3) if len(param_modes) > 2 else 0
+            p1 = self.get_param_position_by_mode(
+                param_modes[0], self.current_index + 1) if len(param_modes) > 0 else 0
+            p2 = self.get_param_position_by_mode(
+                param_modes[1], self.current_index + 2) if len(param_modes) > 1 else 0
+            p3 = self.get_param_position_by_mode(
+                param_modes[2], self.current_index + 3) if len(param_modes) > 2 else 0
 
             if opcode == 1:
                 self.set_opcode(p3, self.get_opcode(p1) + self.get_opcode(p2))
@@ -86,7 +84,6 @@ class IntCodeComputer:
             self.current_index += len(param_modes) + 1
         return
 
-
     def get_param_position_by_mode(self, mode, position):
         if mode == 0:
             return self.get_opcode(position)
@@ -94,7 +91,6 @@ class IntCodeComputer:
             return position
         else:
             return self.rel_base + self.get_opcode(position)
-
 
     def get_opcode_and_param_modes(self, instruction):
         opcode = instruction % 100
@@ -107,7 +103,6 @@ class IntCodeComputer:
             instruction = int(instruction / 10)
             i += 1
         return (opcode, param_modes)
-
 
     def get_opcode_param_length(self, opcode):
         if opcode == 1:
@@ -127,7 +122,7 @@ class IntCodeComputer:
         elif opcode == 8:
             return 4
         elif opcode == 9:
-            return 2    
+            return 2
         elif opcode == 99:
             return 1
 
@@ -143,7 +138,7 @@ test(1125899906842624, part1('104,1125899906842624,99'))
 
 
 # Solve real puzzle
-dir_path = os.path.dirname(__file__) 
+dir_path = os.path.dirname(__file__)
 file_path = os.path.join(dir_path, 'data/day09.txt')
 input_data = [line.rstrip('\n') for line in open(file_path, 'r')][0]
 
