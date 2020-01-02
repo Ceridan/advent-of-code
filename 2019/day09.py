@@ -48,7 +48,7 @@ class IntCodeComputer:
         return self.input[self.input_index]
 
     def run(self):
-        while self.get_opcode(self.current_index) != 99:
+        while True:
             insturction = self.get_opcode(self.current_index)
             opcode, param_modes = self.get_opcode_and_param_modes(insturction)
             p1 = self.get_param_position_by_mode(
@@ -80,9 +80,9 @@ class IntCodeComputer:
                 self.set_opcode(p3, 1 if self.get_opcode(p1) == self.get_opcode(p2) else 0)
             elif opcode == 9:
                 self.rel_base += self.get_opcode(p1)
-
+            elif opcode == 99:
+                return
             self.current_index += len(param_modes) + 1
-        return
 
     def get_param_position_by_mode(self, mode, position):
         if mode == 0:
