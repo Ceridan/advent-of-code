@@ -88,7 +88,7 @@ def get_equation_params(point1, point2):
     x2, y2 = point2
     if x1 == x2:
         return (x1, None)
-    k = (y2 - y1) / (x2 - x1)
+    k = round((y2 - y1) / (x2 - x1), 10)
     b = y1 - k * x1
     return (k, b)
 
