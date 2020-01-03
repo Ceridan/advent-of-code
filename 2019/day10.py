@@ -15,13 +15,9 @@ def part1(data, print_coords=False):
                 for yt in range(len(grid[xt])):
                     if grid[xt][yt] == 0 or (xc, yc) == (xt, yt):
                         continue
-                    dx = 1 if xc > xt else 0
-                    dy = 1 if yc > yt else 0
-                    k, b = get_equation_params((xc, yc), (xt, yt))
-                    if (k, b, dx, dy) in sight:
-                        sight[(k, b, dx, dy)].append((xt, yt))
-                    else:
-                        sight[(k, b, dx, dy)] = [(xt, yt)]
+                    dist = get_distance((xc, yc), (xt, yt))
+                    sin, cos = get_sin_cos((xc, yc), (xt, yt), dist)
+                    sight[(sin, cos)] = True
             current_sum = len(sight.keys())
             if current_sum > result_sum:
                 result_sum = current_sum
@@ -81,16 +77,6 @@ def create_grid(data):
         row = [1 if v == '#' else 0 for v in line]
         grid.append(row)
     return grid
-
-
-def get_equation_params(point1, point2):
-    x1, y1 = point1
-    x2, y2 = point2
-    if x1 == x2:
-        return (x1, None)
-    k = round((y2 - y1) / (x2 - x1), 10)
-    b = y1 - k * x1
-    return (k, b)
 
 
 def get_sin_cos(point1, point2, distance):
