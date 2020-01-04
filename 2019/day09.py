@@ -24,13 +24,13 @@ def run_program(program, input_params=[]):
 
 
 class IntCodeComputer:
-    def __init__(self, program, input=[]):
+    def __init__(self, program, input=None):
         self.program = [int(x) for x in program.split(',')]
         self.opcodes = dict(zip(range(len(self.program)), self.program))
         self.rel_base = 0
         self.current_index = 0
         self.input_index = -1
-        self.input = input
+        self.input = input if input is not None else []
 
     def get_opcode(self, index):
         if index in self.opcodes:
