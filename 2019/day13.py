@@ -12,14 +12,65 @@ def part1(data):
             y = next(icc_iter)
             tile_id = next(icc_iter)
             grid[(x, y)] = tile_id
-            
     except StopIteration:
         return sum([1 for x in grid.values() if x == 2])
     return 0
 
 
 def part2(data):
+    data = '2' + data[1:]
+    computer = IntCodeComputer(data)
+    icc_iter = iter(computer.run())
+    pad = (0, 0)
+    ball = (0, 0)
+    score = 0
+    tile_id = 0
+    try:
+        while True:
+            px = pad[0]
+            bx = ball[0]
+            if px > bx:
+                computer.new_input(-1)
+            elif px < bx:
+                computer.new_input(1)
+            else:
+                computer.new_input(0)
+
+            x = next(icc_iter)
+            y = next(icc_iter)
+            if x == -1 and y == 0: 
+                score = next(icc_iter)
+            else:
+                tile_id = next(icc_iter)
+                
+            if tile_id == 3:
+                pad = (x, y)
+            elif tile_id == 4:
+                ball = (x, y)
+    except StopIteration:
+        return score
     return 0
+
+
+def print_grid(grid):
+    min_x = min([item[0] for item in grid.keys()])
+    max_x = max([item[0] for item in grid.keys()])
+    min_y = min([item[1] for item in grid.keys()])
+    max_y = max([item[1] for item in grid.keys()])
+    for y in range(min_y, max_y + 1):
+        row = []
+        for x in range(min_x, max_x + 1):
+            if (x, y) not in grid or grid[(x, y)] == 0:
+                row.append(' ')
+            elif grid[(x, y)] == 1:
+                row.append('|')
+            elif grid[(x, y)] == 2:
+                row.append('B')
+            elif grid[(x, y)] == 3:
+                row.append('=')
+            else:
+                row.append('O')
+        print(''.join(row))
 
 
 class IntCodeComputer:
@@ -41,6 +92,13 @@ class IntCodeComputer:
 
     def add_input(self, param):
         self.input.append(param)
+
+    def new_input(self, param):
+        self.input = [param]
+        self.input_index = -1
+
+    def is_input_processed(self):
+        return len(self.input) == self.input_index + 1
 
     def read_input(self):
         self.input_index += 1
