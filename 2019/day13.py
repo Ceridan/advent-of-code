@@ -38,11 +38,11 @@ def part2(data):
 
             x = next(icc_iter)
             y = next(icc_iter)
-            if x == -1 and y == 0: 
+            if x == -1 and y == 0:
                 score = next(icc_iter)
             else:
                 tile_id = next(icc_iter)
-                
+
             if tile_id == 3:
                 pad = (x, y)
             elif tile_id == 4:
