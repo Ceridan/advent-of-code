@@ -5,18 +5,19 @@ from typing import List
 
 # Solution
 def part1(nums: List[int]) -> int:
-    combs = itertools.combinations(nums, 2)
-    for a, b in combs:
-        if a + b == 2020:
-            return a * b
+    s = set(nums)
+    for num in nums:
+        if 2020 - num in s:
+            return num * (2020 - num)
     return -1
 
 
 def part2(nums: List[int]) -> int:
-    combs = itertools.combinations(nums, 3)
-    for a, b, c in combs:
-        if a + b + c == 2020:
-            return a * b * c
+    s = set(nums)
+    combs = itertools.combinations(nums, 2)
+    for a, b in combs:
+        if 2020 - a - b in s:
+            return a * b * (2020 - a - b)
     return -1
 
 
