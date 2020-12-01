@@ -17,7 +17,7 @@ def test(expected, actual):
 
 # Solve real puzzle
 dir_path = os.path.dirname(__file__)
-file_path = os.path.join(dir_path, 'data/dayXX.txt')
+file_path = os.path.join(dir_path, 'data/day{{XX}}.txt')
 with open(file_path, 'r') as f:
     input_data = [int(line) for line in f.readlines()]
 
