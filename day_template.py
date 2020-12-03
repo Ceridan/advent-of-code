@@ -24,5 +24,5 @@ file_path = os.path.join(dir_path, 'data/dayXX.txt')
 with open(file_path, 'r') as f:
     input_data = [line for line in f.readlines()]
 
-    print('Day 01, part 1: %r' % (part1(input_data)))
-    print('Day 01, part 2: %r' % (part2(input_data)))
+    print('Day XX, part 1: %r' % (part1(input_data)))
+    print('Day XX, part 2: %r' % (part2(input_data)))
