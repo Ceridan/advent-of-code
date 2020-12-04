@@ -83,11 +83,11 @@ test(336, part2([
     '#...##....#',
     '.#..#...#.#',
 ], rules=[
-    SlopeRule(right=1, down=1),
-    SlopeRule(right=3, down=1),
-    SlopeRule(right=5, down=1),
-    SlopeRule(right=7, down=1),
-    SlopeRule(right=1, down=2),
+    SlopeRule(1, 1),
+    SlopeRule(3, 1),
+    SlopeRule(5, 1),
+    SlopeRule(7, 1),
+    SlopeRule(1, 2),
 ]))
 
 
@@ -99,9 +99,9 @@ with open(file_path, 'r') as f:
 
     print('Day 03, part 1: %r' % (part1(input_data, rule=SlopeRule(3, 1))))
     print('Day 03, part 2: %r' % (part2(input_data, rules=[
-        SlopeRule(right=1, down=1),
-        SlopeRule(right=3, down=1),
-        SlopeRule(right=5, down=1),
-        SlopeRule(right=7, down=1),
-        SlopeRule(right=1, down=2),
+        SlopeRule(1, 1),
+        SlopeRule(3, 1),
+        SlopeRule(5, 1),
+        SlopeRule(7, 1),
+        SlopeRule(1, 2),
     ])))

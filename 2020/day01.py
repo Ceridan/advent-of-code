@@ -34,7 +34,7 @@ test(241861950, part2([1721, 979, 366, 299, 675, 1456]))
 dir_path = os.path.dirname(__file__)
 file_path = os.path.join(dir_path, 'data/day01.txt')
 with open(file_path, 'r') as f:
-    input_data = [int(line) for line in f.readlines()]
+    input_data = [int(line.strip()) for line in f.readlines()]
 
     print('Day 01, part 1: %r' % (part1(input_data)))
     print('Day 01, part 2: %r' % (part2(input_data)))

@@ -1,8 +1,6 @@
 import os
 import re
 
-
-# Solution
 from collections import namedtuple
 from typing import List, Tuple
 
@@ -10,6 +8,7 @@ from typing import List, Tuple
 Rule = namedtuple('Rule', 'min max symbol')
 
 
+# Solution
 def part1(passwords_with_rules: List[str]) -> int:
     pwrs = _parse_passwords(passwords_with_rules)
     valid = 0
@@ -67,7 +66,7 @@ test(1, part2([
 dir_path = os.path.dirname(__file__)
 file_path = os.path.join(dir_path, 'data/day02.txt')
 with open(file_path, 'r') as f:
-    input_data = [line for line in f.readlines()]
+    input_data = [line.strip() for line in f.readlines()]
 
     print('Day 02, part 1: %r' % (part1(input_data)))
     print('Day 02, part 2: %r' % (part2(input_data)))
