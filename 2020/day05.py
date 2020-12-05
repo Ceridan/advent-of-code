@@ -3,8 +3,6 @@ from typing import List, Tuple
 
 
 # Solution
-
-
 def part1(seats: List[str]) -> int:
     best_seat_id = 0
 
@@ -30,7 +28,6 @@ def part2(seats: List[str]) -> int:
             return ids[i] - 1
 
     return -1
-
 
 
 def _calculate_seat(seat: str) -> Tuple[int, int]:
