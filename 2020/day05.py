@@ -22,12 +22,12 @@ def part2(seats: List[str]) -> int:
         seat_id = row * 8 + column
         ids.append(seat_id)
 
-    ids.sort()
-    for i in range(1, len(ids)):
-        if ids[i] - ids[i - 1] == 2:
-            return ids[i] - 1
+    min_ = min(ids)
+    max_ = max(ids)
+    known_seats = set(ids)
+    all_seats = set(range(min_, max_ + 1))
 
-    return -1
+    return list(all_seats - known_seats)[0]
 
 
 def _calculate_seat(seat: str) -> Tuple[int, int]:
