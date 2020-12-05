@@ -66,7 +66,7 @@ def _validate(field: str, value: str) -> bool:
 
 # Tests
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 test(2, part1("""

@@ -23,7 +23,7 @@ def part2(nums: List[int]) -> int:
 
 # Tests
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 test(514579, part1([1721, 979, 366, 299, 675, 1456]))

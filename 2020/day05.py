@@ -52,7 +52,7 @@ def _binary_search(partition: str) -> int:
 
 # Tests
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 test((44, 5), _calculate_seat('FBFBBFFRLR'))
@@ -66,6 +66,7 @@ test(820, part1([
     'FFFBBBFRRR',
     'BBFFBBFRLL',
 ]))
+
 
 # Solve real puzzle
 dir_path = os.path.dirname(__file__)

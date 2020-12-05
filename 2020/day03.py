@@ -52,7 +52,7 @@ def _calculate(grid: TreeGrid, rule: SlopeRule) -> int:
 
 # Tests
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 test(7, part1([

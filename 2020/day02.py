@@ -44,9 +44,9 @@ def _parse_passwords(passwords_with_rules: List[str]) -> List[Tuple[Rule, str]]:
     return parsed_passwords
 
 
-# # Tests
+# Tests
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 test(2, part1([
