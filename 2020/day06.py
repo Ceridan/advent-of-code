@@ -22,10 +22,10 @@ def part2(form_data: str) -> int:
     answer_count = 0
 
     for group in groups:
-        answers = defaultdict(int)
-        for answer in ''.join(group):
-            answers[answer] += 1
-        answer_count += sum([1 for v in answers.values() if v == len(group)])
+        answers = set(group[0])
+        for i in range(1, len(group)):
+            answers.intersection_update(group[i])
+        answer_count += len(answers)
 
     return answer_count
 
