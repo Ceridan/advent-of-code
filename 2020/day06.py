@@ -11,10 +11,8 @@ def part1(form_data: str) -> int:
     answer_count = 0
 
     for group in groups:
-        answers = {}
-        for answer in ''.join(group):
-            answers[answer] = 1
-        answer_count += sum(answers.values())
+        answers = set(''.join(group))
+        answer_count += len(answers)
 
     return answer_count
 
