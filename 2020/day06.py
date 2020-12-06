@@ -1,7 +1,5 @@
 import os
 
-
-from collections import defaultdict
 from typing import List
 
 
@@ -41,6 +39,7 @@ def _parse_form_data(form_data: str) -> List[List[str]]:
         groups.append(group)
 
     return groups
+
 
 # Tests
 def test(expected, actual):
