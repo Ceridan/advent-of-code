@@ -25,6 +25,8 @@ def part2(form_data: str) -> int:
         answers = set(group[0])
         for i in range(1, len(group)):
             answers.intersection_update(group[i])
+            if len(answers) == 0:
+                break
         answer_count += len(answers)
 
     return answer_count
