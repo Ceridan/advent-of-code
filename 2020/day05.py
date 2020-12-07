@@ -2,7 +2,6 @@ import os
 from typing import List, Tuple
 
 
-# Solution
 def part1(seats: List[str]) -> int:
     best_seat_id = 0
 
@@ -50,7 +49,6 @@ def _binary_search(partition: str) -> int:
     return right
 
 
-# Tests
 def test(expected, actual):
     assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
@@ -68,9 +66,7 @@ test(820, part1([
 ]))
 
 
-# Solve real puzzle
-dir_path = os.path.dirname(__file__)
-file_path = os.path.join(dir_path, 'data/day05.txt')
+file_path = os.path.join(os.path.dirname(__file__), 'data/day05.txt')
 with open(file_path, 'r') as f:
     input_data = [line.strip() for line in f.readlines()]
 

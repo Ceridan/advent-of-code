@@ -3,7 +3,6 @@ import os
 from typing import List
 
 
-# Solution
 def part1(form_data: str) -> int:
     groups = _parse_form_data(form_data)
     answer_count = 0
@@ -41,7 +40,6 @@ def _parse_form_data(form_data: str) -> List[List[str]]:
     return groups
 
 
-# Tests
 def test(expected, actual):
     assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
 
@@ -83,9 +81,7 @@ b
 """))
 
 
-# Solve real puzzle
-dir_path = os.path.dirname(__file__)
-file_path = os.path.join(dir_path, 'data/day06.txt')
+file_path = os.path.join(os.path.dirname(__file__), 'data/day06.txt')
 with open(file_path, 'r') as f:
     input_data = f.read()
 

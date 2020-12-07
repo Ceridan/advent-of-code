@@ -8,7 +8,6 @@ from typing import List, Tuple
 Rule = namedtuple('Rule', 'min max symbol')
 
 
-# Solution
 def part1(passwords_with_rules: List[str]) -> int:
     pwrs = _parse_passwords(passwords_with_rules)
     valid = 0
@@ -44,7 +43,6 @@ def _parse_passwords(passwords_with_rules: List[str]) -> List[Tuple[Rule, str]]:
     return parsed_passwords
 
 
-# Tests
 def test(expected, actual):
     assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
@@ -62,9 +60,7 @@ test(1, part2([
 ]))
 
 
-# Solve real puzzle
-dir_path = os.path.dirname(__file__)
-file_path = os.path.join(dir_path, 'data/day02.txt')
+file_path = os.path.join(os.path.dirname(__file__), 'data/day02.txt')
 with open(file_path, 'r') as f:
     input_data = [line.strip() for line in f.readlines()]
 

@@ -3,7 +3,6 @@ import os
 from typing import List
 
 
-# Solution
 def part1(nums: List[int]) -> int:
     s = set(nums)
     for num in nums:
@@ -21,7 +20,6 @@ def part2(nums: List[int]) -> int:
     return -1
 
 
-# Tests
 def test(expected, actual):
     assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
@@ -30,9 +28,7 @@ test(514579, part1([1721, 979, 366, 299, 675, 1456]))
 test(241861950, part2([1721, 979, 366, 299, 675, 1456]))
 
 
-# Solve real puzzle
-dir_path = os.path.dirname(__file__)
-file_path = os.path.join(dir_path, 'data/day01.txt')
+file_path = os.path.join(os.path.dirname(__file__), 'data/day01.txt')
 with open(file_path, 'r') as f:
     input_data = [int(line.strip()) for line in f.readlines()]
 

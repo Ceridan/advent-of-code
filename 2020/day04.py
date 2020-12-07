@@ -2,7 +2,6 @@ import os
 import re
 
 
-# Solution
 def part1(passport_data: str) -> int:
     passports = [p.replace('\n', ' ') for p in passport_data.split('\n\n')]
     required_fields = {'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'}
@@ -64,7 +63,6 @@ def _validate(field: str, value: str) -> bool:
         return True
 
 
-# Tests
 def test(expected, actual):
     assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
@@ -114,9 +112,8 @@ eyr:2022
 iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
 """))
 
-# Solve real puzzle
-dir_path = os.path.dirname(__file__)
-file_path = os.path.join(dir_path, 'data/day04.txt')
+
+file_path = os.path.join(os.path.dirname(__file__), 'data/day04.txt')
 with open(file_path, 'r') as f:
     input_data = f.read()
 

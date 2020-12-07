@@ -23,7 +23,6 @@ class TreeGrid:
         return self._grid[y][x % width]
 
 
-# Solution
 def part1(tree_map: List[str], rule: SlopeRule) -> int:
     grid = TreeGrid(tree_map)
     return _calculate(grid, rule)
@@ -50,7 +49,6 @@ def _calculate(grid: TreeGrid, rule: SlopeRule) -> int:
     return trees_count
 
 
-# Tests
 def test(expected, actual):
     assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
@@ -91,9 +89,7 @@ test(336, part2([
 ]))
 
 
-# Solve real puzzle
-dir_path = os.path.dirname(__file__)
-file_path = os.path.join(dir_path, 'data/day03.txt')
+file_path = os.path.join(os.path.dirname(__file__), 'data/day03.txt')
 with open(file_path, 'r') as f:
     input_data = [line.strip() for line in f.readlines()]
 
