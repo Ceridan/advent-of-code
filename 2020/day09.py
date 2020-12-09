@@ -11,7 +11,7 @@ def part1(nums: List[int], preamble: int) -> int:
         found = False
         for v in window:
             diff = current - v
-            if diff != v and diff > 0 and diff in window:
+            if diff > 0 and diff in window:
                 found = True
                 break
 
