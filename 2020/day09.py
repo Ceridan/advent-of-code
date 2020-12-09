@@ -27,19 +27,20 @@ def part1(nums: List[int], preamble: int) -> int:
 def part2(nums: List[int], preamble: int) -> int:
     invalid_number = part1(nums, preamble)
 
-    for i in range(len(nums) - 1):
-        current = nums[i]
-        min_ = current
-        max_ = current
-        for j in range(i + 1, len(nums)):
-            current += nums[j]
-            if current > invalid_number:
-                break
+    l, r = 0, 0
+    current = 0
 
-            min_ = min(min_, nums[j])
-            max_ = max(max_, nums[j])
-            if current == invalid_number:
-                return min_ + max_
+    while r < len(nums):
+        current += nums[r]
+
+        while current > invalid_number:
+            current -= nums[l]
+            l += 1
+
+        if current == invalid_number and r - l >= 2:
+            return min(nums[l:r + 1]) + max(nums[l:r + 1])
+
+        r += 1
 
     return -1
 
