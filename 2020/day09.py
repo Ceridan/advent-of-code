@@ -1,10 +1,11 @@
 import os
+from collections import deque
 
 from typing import List
 
 
 def part1(nums: List[int], preamble: int) -> int:
-    window = set(nums[:preamble])
+    window = deque(nums[:preamble])
 
     for i in range(preamble, len(nums)):
         current = nums[i]
@@ -18,8 +19,8 @@ def part1(nums: List[int], preamble: int) -> int:
         if not found:
             return current
 
-        window.remove(nums[i - preamble])
-        window.add(current)
+        window.popleft()
+        window.append(current)
 
     return -1
 
