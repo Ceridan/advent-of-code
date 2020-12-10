@@ -69,7 +69,7 @@ def _parse_rules(bag_rules: List[str]) -> Dict[str, BagRuleNode]:
 
 
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 test(4, part1('shiny gold', [

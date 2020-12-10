@@ -12,7 +12,7 @@ def part2(data: List[str]) -> None:
 
 
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 file_path = os.path.join(os.path.dirname(__file__), 'data/dayXX.txt')

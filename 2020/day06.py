@@ -41,7 +41,7 @@ def _parse_form_data(form_data: str) -> List[List[str]]:
 
 
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 test(11, part1("""

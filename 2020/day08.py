@@ -82,7 +82,7 @@ def part2(program: List[str]) -> int:
 
 
 def test(expected, actual):
-    assert expected == actual, 'Expected: %r, Actual: %r' % (expected, actual)
+    assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
 
 test(5, part1([
