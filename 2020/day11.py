@@ -12,7 +12,6 @@ def part2(seats: List[str]) -> int:
 
 
 def _calculate_seats(seats: List[str], rules: int) -> int:
-    seats = _prepare_seats(seats)
     next_state = _next_seat_state_rules_1 if rules == 1 else _next_seat_state_rules_2
 
     while True:
@@ -35,12 +34,6 @@ def _calculate_seats(seats: List[str], rules: int) -> int:
         seats = next_seats
 
 
-def _prepare_seats(seats: List[str]) -> List[str]:
-    prepared_seats = ['.' + line + '.' for line in seats]
-    n = len(prepared_seats[0])
-    return ['.' * n] + prepared_seats + ['.' * n]
-
-
 def _next_seat_state_rules_1(seats: List[str], x: int, y: int) -> str:
     if seats[y][x] == '.':
         return seats[y][x]
@@ -51,8 +44,9 @@ def _next_seat_state_rules_1(seats: List[str], x: int, y: int) -> str:
         for y_ in [-1, 0, 1]:
             if x_ == 0 and y_ == 0:
                 continue
-            if seats[y + y_][x + x_] == '#':
-                occupied_count += 1
+            if 0 <= x + x_ < len(seats[0]) and 0 <= y + y_ < len(seats):
+                if seats[y + y_][x + x_] == '#':
+                    occupied_count += 1
 
     if seats[y][x] == 'L' and occupied_count == 0:
         return '#'
