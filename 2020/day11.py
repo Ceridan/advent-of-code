@@ -93,16 +93,6 @@ def _next_seat_state_rules_2(seats: List[str], x: int, y: int) -> str:
     return seats[y][x]
 
 
-def _print_state(seats: List[str], step: int = None) -> None:
-    if step:
-        print(f'Step: {step}')
-    print('----------------------------------------------------')
-    for y in range(1, len(seats) - 1):
-        line = ''.join([seats[y][x] for x in range(1, len(seats[y]) - 1)])
-        print(line)
-    print('----------------------------------------------------')
-
-
 def test(expected, actual):
     assert expected == actual, f'Expected: {expected}, Actual: {actual}'
 
