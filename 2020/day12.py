@@ -4,7 +4,7 @@ from collections import namedtuple
 from typing import List
 
 
-Action = namedtuple('Action', "action value")
+Action = namedtuple('Action', "name value")
 
 COMPASS_TO_INT = {'E': 0, 'N': 1, 'W': 2, 'S': 3}
 INT_TO_COMPASS = {0: 'E', 1: 'N', 2: 'W', 3: 'S'}
@@ -25,15 +25,15 @@ class Ship:
         return distance
 
     def _process_single_action(self, action: Action) -> None:
-        if action.action == 'F':
+        if action.name == 'F':
             self._compass[self._direction] += action.value
-        elif action.action in ['L', 'R']:
+        elif action.name in ['L', 'R']:
             pivot = (action.value // 90) % 4
-            pivot = pivot if action.action == 'L' else (4 - pivot) % 4
+            pivot = pivot if action.name == 'L' else (4 - pivot) % 4
             pivot = (COMPASS_TO_INT[self._direction] + pivot) % 4
             self._direction = INT_TO_COMPASS[pivot]
         else:
-            self._compass[action.action] += action.value
+            self._compass[action.name] += action.value
 
 
 class Waypoint:
@@ -47,23 +47,20 @@ class Waypoint:
         if act in ['L', 'R']:
             pivot = (val // 90) % 4
             pivot = pivot if act == 'L' else (4 - pivot) % 4
-            ew_pivot = (COMPASS_TO_INT[self.EW.action] + pivot) % 4
-            ns_pivot = (COMPASS_TO_INT[self.NS.action] + pivot) % 4
+            ew_pivot = (COMPASS_TO_INT[self.EW.name] + pivot) % 4
+            ns_pivot = (COMPASS_TO_INT[self.NS.name] + pivot) % 4
             new_ew_action = Action(INT_TO_COMPASS[ew_pivot], self.EW.value)
             new_ns_action = Action(INT_TO_COMPASS[ns_pivot], self.NS.value)
-            self.EW = new_ew_action if new_ew_action.action in ['E', 'W'] else new_ns_action
-            self.NS = new_ns_action if new_ns_action.action in ['N', 'S'] else new_ew_action
-        elif action.action in ['N', 'S']:
-            direction = self.NS.action if self.NS.action == act or self.NS.value >= val else act
-            value = self.NS.value + val if self.NS.action == act else abs(self.NS.value - val)
+            self.EW = new_ew_action if new_ew_action.name in ['E', 'W'] else new_ns_action
+            self.NS = new_ns_action if new_ns_action.name in ['N', 'S'] else new_ew_action
+        elif action.name in ['N', 'S']:
+            direction = self.NS.name if self.NS.name == act or self.NS.value >= val else act
+            value = self.NS.value + val if self.NS.name == act else abs(self.NS.value - val)
             self.NS = Action(direction, value)
-        elif action.action in ['E', 'W']:
-            direction = self.EW.action if self.EW.action == act or self.EW.value >= val else act
-            value = self.EW.value + val if self.EW.action == act else abs(self.EW.value - val)
+        elif action.name in ['E', 'W']:
+            direction = self.EW.name if self.EW.name == act or self.EW.value >= val else act
+            value = self.EW.value + val if self.EW.name == act else abs(self.EW.value - val)
             self.EW = Action(direction, value)
-
-        print(f'EW: {self.EW}')
-        print(f'NS: {self.NS}')
 
 
 class WaypointShip:
@@ -81,15 +78,11 @@ class WaypointShip:
         return distance
 
     def _process_single_action(self, action: Action) -> None:
-        print(f'Action: {action.action}{action.value}')
-
-        if action.action == 'F':
-            self._compass[self._waypoint.EW.action] += self._waypoint.EW.value * action.value
-            self._compass[self._waypoint.NS.action] += self._waypoint.NS.value * action.value
+        if action.name == 'F':
+            self._compass[self._waypoint.EW.name] += self._waypoint.EW.value * action.value
+            self._compass[self._waypoint.NS.name] += self._waypoint.NS.value * action.value
         else:
             self._waypoint.move(action)
-
-        print(self._compass)
 
 
 def part1(actions: List[str]) -> int:
