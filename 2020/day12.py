@@ -27,7 +27,7 @@ class Ship:
     def _process_single_action(self, action: Action) -> None:
         if action.name == 'F':
             self._compass[self._direction] += action.value
-        elif action.name in ['L', 'R']:
+        elif action.name in 'LR':
             pivot = action.value // 90
             pivot = pivot if action.name == 'L' else (4 - pivot)
             pivot = (COMPASS_TO_INT[self._direction] + pivot) % 4
@@ -44,20 +44,20 @@ class Waypoint:
     def move(self, action: Action):
         act, val = action
 
-        if act in ['L', 'R']:
+        if act in 'LR':
             pivot = val // 90
             pivot = pivot if act == 'L' else (4 - pivot)
             ew_pivot = (COMPASS_TO_INT[self.EW.name] + pivot) % 4
             ns_pivot = (COMPASS_TO_INT[self.NS.name] + pivot) % 4
             new_ew_action = Action(INT_TO_COMPASS[ew_pivot], self.EW.value)
             new_ns_action = Action(INT_TO_COMPASS[ns_pivot], self.NS.value)
-            self.EW = new_ew_action if new_ew_action.name in ['E', 'W'] else new_ns_action
-            self.NS = new_ns_action if new_ns_action.name in ['N', 'S'] else new_ew_action
-        elif action.name in ['N', 'S']:
+            self.EW = new_ew_action if new_ew_action.name in 'EW' else new_ns_action
+            self.NS = new_ns_action if new_ns_action.name in 'NS' else new_ew_action
+        elif action.name in 'NS':
             direction = self.NS.name if self.NS.name == act or self.NS.value >= val else act
             value = self.NS.value + val if self.NS.name == act else abs(self.NS.value - val)
             self.NS = Action(direction, value)
-        elif action.name in ['E', 'W']:
+        elif action.name in 'EW':
             direction = self.EW.name if self.EW.name == act or self.EW.value >= val else act
             value = self.EW.value + val if self.EW.name == act else abs(self.EW.value - val)
             self.EW = Action(direction, value)
