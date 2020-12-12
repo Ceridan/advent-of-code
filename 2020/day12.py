@@ -4,7 +4,7 @@ from collections import namedtuple
 from typing import List
 
 
-Action = namedtuple('Action', "name value")
+Action = namedtuple('Action', 'name value')
 
 COMPASS_TO_INT = {'E': 0, 'N': 1, 'W': 2, 'S': 3}
 INT_TO_COMPASS = {0: 'E', 1: 'N', 2: 'W', 3: 'S'}
@@ -28,8 +28,8 @@ class Ship:
         if action.name == 'F':
             self._compass[self._direction] += action.value
         elif action.name in ['L', 'R']:
-            pivot = (action.value // 90) % 4
-            pivot = pivot if action.name == 'L' else (4 - pivot) % 4
+            pivot = action.value // 90
+            pivot = pivot if action.name == 'L' else (4 - pivot)
             pivot = (COMPASS_TO_INT[self._direction] + pivot) % 4
             self._direction = INT_TO_COMPASS[pivot]
         else:
@@ -45,8 +45,8 @@ class Waypoint:
         act, val = action
 
         if act in ['L', 'R']:
-            pivot = (val // 90) % 4
-            pivot = pivot if act == 'L' else (4 - pivot) % 4
+            pivot = val // 90
+            pivot = pivot if act == 'L' else (4 - pivot)
             ew_pivot = (COMPASS_TO_INT[self.EW.name] + pivot) % 4
             ns_pivot = (COMPASS_TO_INT[self.NS.name] + pivot) % 4
             new_ew_action = Action(INT_TO_COMPASS[ew_pivot], self.EW.value)
