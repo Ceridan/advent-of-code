@@ -27,14 +27,15 @@ def part2(bus_schedule: str) -> int:
     for bus_id in known_ids:
         modulo *= bus_id
 
-    modular_inverses = [_modular_inverse(modulo // bus_id, bus_id) for bus_id in known_ids]
+    modulas = [modulo // bus_id for bus_id in known_ids]
+    modular_inverses = [_modular_inverse(modulo, bus_id) for modulo, bus_id in zip(modulas, known_ids)]
 
     t = 0
     j = 0
     for i, bus_id in enumerate(all_ids):
         if bus_id == 0:
             continue
-        t += (bus_id - i) * (modulo // bus_id) * modular_inverses[j]
+        t += (bus_id - i) * modulas[j] * modular_inverses[j]
         j += 1
 
     return t % modulo
