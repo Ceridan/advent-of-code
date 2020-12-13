@@ -75,6 +75,8 @@ def test(expected, actual):
 
 test(295, part1(939, '7,13,x,x,59,x,31,19'))
 
+test(6, part2('3, 7'))
+test(174, part2('3, 7, 11'))
 test(1068781, part2('7,13,x,x,59,x,31,19'))
 test(3417, part2('17,x,13,19'))
 test(754018, part2('67,7,59,61'))
