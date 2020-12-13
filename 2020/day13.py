@@ -1,12 +1,12 @@
 import os
 import sys
-from typing import List
 
 
 # References:
-# 1. Extended Euclidean algorithm (https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm)
-# 2. Modular multiplicative inverse (https://en.wikipedia.org/wiki/Modular_multiplicative_inverse)
-# 3. Finding the modular inverse for every number modulo m in linear time (https://cp-algorithms.com/algebra/module-inverse.html)
+# 1. Chinese remainder theorem (https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
+# 2. Extended Euclidean algorithm (https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm)
+# 3. Modular multiplicative inverse (https://en.wikipedia.org/wiki/Modular_multiplicative_inverse)
+# 4. Finding the modular inverse for every number modulo m in linear time (https://cp-algorithms.com/algebra/module-inverse.html)
 
 
 def part1(earliest_timestamp: int, bus_schedule: str) -> int:
