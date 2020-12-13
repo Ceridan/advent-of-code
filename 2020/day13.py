@@ -3,6 +3,12 @@ import sys
 from typing import List
 
 
+# References:
+# 1. Extended Euclidean algorithm (https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm)
+# 2. Modular multiplicative inverse (https://en.wikipedia.org/wiki/Modular_multiplicative_inverse)
+# 3. Finding the modular inverse for every number modulo m in linear time (https://cp-algorithms.com/algebra/module-inverse.html)
+
+
 def part1(earliest_timestamp: int, bus_schedule: str) -> int:
     ids = [int(bus_id) for bus_id in bus_schedule.split(',') if bus_id != 'x']
     best_id = 0
@@ -21,44 +27,46 @@ def part1(earliest_timestamp: int, bus_schedule: str) -> int:
     return best_id * timestamp_diff
 
 
-def part2(bus_schedule: str, watermark: int = 0) -> int:
+def part2(bus_schedule: str) -> int:
     all_ids = [int(bus_id) if bus_id != 'x' else 0 for bus_id in bus_schedule.split(',')]
     known_ids = [bus_id for bus_id in all_ids if bus_id > 0]
 
-    first_id = all_ids[0]
-    max_id = max(known_ids)
-    first_max_id_diff = abs(all_ids.index(first_id) - all_ids.index(max_id))
+    modulo = 1
+    for bus_id in known_ids:
+        modulo *= bus_id
 
-    current = max_id * (watermark // max_id) if watermark > 0 else max_id
-    t = current - first_max_id_diff
+    modular_inverses = [_modular_inverse(modulo // bus_id, bus_id) for bus_id in known_ids]
 
-    while not _check_order(all_ids, t):
-        current += max_id
-        t = current - first_max_id_diff
-
-    return t
-
-
-def _check_order(all_ids: List[int], t: int) -> bool:
-    for i in range(len(all_ids)):
-        bus_id = all_ids[i]
+    t = 0
+    j = 0
+    for i, bus_id in enumerate(all_ids):
         if bus_id == 0:
             continue
+        t += (bus_id - i) * (modulo // bus_id) * modular_inverses[j]
+        j += 1
 
-        if (t + i) % bus_id != 0:
-            return False
-
-    return True
-
-
-def _gcd(a: int, b: int) -> int:
-    return _gcd(b, a % b) if b else a
+    return t % modulo
 
 
-def _lcm(a: int, b: int) -> int:
-    if a > b:
-        a, b = b, a
-    return a // _gcd(a, b) * b
+def _gcd_extended(a, b):
+    if a == 0:
+        return b, 0, 1
+
+    gcd, x_, y_ = _gcd_extended(b % a, a)
+
+    x = y_ - (b // a) * x_
+    y = x_
+
+    return gcd, x, y
+
+
+def _modular_inverse(a, m):
+    gcd, x, y = _gcd_extended(a, m)
+    if gcd != 1:
+        raise ValueError('No solutions: both "a" and "m" should be prime numbers.')
+
+    x = (x % m + m) % m
+    return x
 
 
 def test(expected, actual):
@@ -81,4 +89,4 @@ with open(file_path, 'r') as f:
     input_data = f.readline().strip()
 
     print('Day 13, part 1: %r' % (part1(timestamp, input_data)))
-    print('Day 13, part 2: %r' % (part2(input_data, watermark=100000000000000)))
+    print('Day 13, part 2: %r' % (part2(input_data)))
