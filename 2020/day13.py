@@ -11,20 +11,12 @@ import sys
 
 def part1(earliest_timestamp: int, bus_schedule: str) -> int:
     ids = [int(bus_id) for bus_id in bus_schedule.split(',') if bus_id != 'x']
-    best_id = 0
-    timestamp_diff = sys.maxsize
+    modulo_ids = [-earliest_timestamp % bus_id for bus_id in ids]
 
-    for bus_id in ids:
-        if earliest_timestamp % bus_id == 0:
-            return 0
+    best_diff = min(modulo_ids)
+    best_id = ids[modulo_ids.index(best_diff)]
 
-        diff = (bus_id * (earliest_timestamp // bus_id + 1)) % earliest_timestamp
-
-        if diff < timestamp_diff:
-            timestamp_diff = diff
-            best_id = bus_id
-
-    return best_id * timestamp_diff
+    return best_id * best_diff
 
 
 def part2(bus_schedule: str) -> int:
