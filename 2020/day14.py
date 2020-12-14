@@ -1,80 +1,38 @@
 import itertools
 import os
 import re
-from abc import ABC, abstractmethod
 
-from typing import List, Union
-
-
-class Instruction(ABC):
-    @property
-    @abstractmethod
-    def type(self):
-        pass
+from typing import List
 
 
-class MemInstruction(Instruction):
-    def __init__(self, address: int, value: int):
-        self.address = address
-        self.value = value
-
-    @property
-    def type(self):
-        return 'mem'
-
-
-class MaskInstruction(Instruction):
-    def __init__(self, mask: str):
-        self.mask = mask
-
-    @property
-    def type(self):
-        return 'mask'
-
-
-def part1(raw_instructions: List[str]) -> int:
-    instructions = _parse_instructions(raw_instructions)
+def part1(instructions: List[str]) -> int:
     memory = {}
     mask = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 
     for instr in instructions:
-        if instr.type == 'mask':
-            mask = instr.mask
-        else:
-            memory[instr.address] = _apply_mask_v1(mask, instr.value)
-
-    return sum(memory.values())
-
-
-def part2(raw_instructions: List[str]) -> int:
-    instructions = _parse_instructions(raw_instructions)
-    memory = {}
-    mask = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-
-    for instr in instructions:
-        if instr.type == 'mask':
-            mask = instr.mask
-        else:
-            masked_address = _apply_mask_v2(mask, instr.address)
-            for address in _generate_addresses(masked_address):
-                memory[address] = instr.value
-
-    return sum(memory.values())
-
-
-def _parse_instructions(raw_instructions: List[str]) -> List[Union[MemInstruction, MaskInstruction]]:
-    regex = re.compile(r'(\d+)')
-    instructions = []
-
-    for instr in raw_instructions:
         if instr.startswith('mask'):
-            mask = instr.split('=')[1].strip()
-            instructions.append(MaskInstruction(mask))
+            mask = re.findall(r'([01X]+)', instr)[0]
         else:
-            mem_values = regex.findall(instr)
-            instructions.append(MemInstruction(address=int(mem_values[0]), value=int(mem_values[1])))
+            address, value = [int(v) for v in re.findall(r'(\d+)', instr)]
+            memory[address] = _apply_mask_v1(mask, value)
 
-    return instructions
+    return sum(memory.values())
+
+
+def part2(instructions: List[str]) -> int:
+    memory = {}
+    mask = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+
+    for instr in instructions:
+        if instr.startswith('mask'):
+            mask = re.findall(r'([01X]+)', instr)[0]
+        else:
+            address, value = [int(v) for v in re.findall(r'(\d+)', instr)]
+            masked_address = _apply_mask_v2(mask, address)
+            for addr in _generate_addresses(masked_address):
+                memory[addr] = value
+
+    return sum(memory.values())
 
 
 def _apply_mask_v1(mask: str, value: int) -> int:
