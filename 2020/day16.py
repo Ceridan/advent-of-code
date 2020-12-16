@@ -39,7 +39,7 @@ def part2(tickets_data: str) -> int:
 
     for rule, fields in rule_fields.items():
         if rule.startswith('departure'):
-            departure_value *= valid_tickets[0][fields.pop()]
+            departure_value *= valid_tickets[0][list(fields)[0]]
 
     return departure_value
 
