@@ -4,7 +4,7 @@ from typing import Tuple, Dict
 
 
 def part1(cubes_data: str, cycles: int) -> int:
-    dimensions, initial_size = _parse_data_d3(cubes_data)
+    dimensions, initial_size = _parse_data(cubes_data, dimension_size=3)
 
     size = {
         'x': [initial_size[0][0], initial_size[0][1]],
@@ -53,7 +53,7 @@ def part1(cubes_data: str, cycles: int) -> int:
 
 
 def part2(cubes_data: str, cycles: int) -> int:
-    dimensions, initial_size = _parse_data_d4(cubes_data)
+    dimensions, initial_size = _parse_data(cubes_data, dimension_size=4)
 
     size = {
         'x': [initial_size[0][0], initial_size[0][1]],
@@ -158,8 +158,15 @@ def _apply_conway_rule_d4(point: Tuple[int, int, int, int], dimensions: Dict) ->
     return 0
 
 
-def _parse_data_d3(cubes_data: str) -> Tuple[Dict[int, Dict[int, Dict[int, int]]], Tuple]:
-    dimensions = {0: {}}
+def _parse_data(cubes_data: str, dimension_size: int) -> Tuple[Dict, Tuple]:
+    dimensions = {}
+    current_dimension = dimensions
+    sizes = []
+
+    for i in range(dimension_size - 2):
+        current_dimension[0] = {}
+        current_dimension = current_dimension[0]
+        sizes.append((0, 0))
 
     x_size = 0
     y = 0
@@ -167,37 +174,17 @@ def _parse_data_d3(cubes_data: str) -> Tuple[Dict[int, Dict[int, Dict[int, int]]
         line = line.strip()
         if not line:
             continue
-        dimensions[0][y] = {}
+
+        current_dimension[y] = {}
         x_size = len(line) - 1
 
         for x, ch in enumerate(line):
             if ch == '#':
-                dimensions[0][y][x] = 1
+                current_dimension[y][x] = 1
 
         y += 1
 
-    return dimensions, ((0, x_size), (0, y - 1), (0, 0))
-
-
-def _parse_data_d4(cubes_data: str) -> Tuple[Dict, Tuple]:
-    dimensions = {0: {0: {}}}
-
-    x_size = 0
-    y = 0
-    for line in cubes_data.split('\n'):
-        line = line.strip()
-        if not line:
-            continue
-        dimensions[0][0][y] = {}
-        x_size = len(line) - 1
-
-        for x, ch in enumerate(line):
-            if ch == '#':
-                dimensions[0][0][y][x] = 1
-
-        y += 1
-
-    return dimensions, ((0, x_size), (0, y - 1), (0, 0), (0, 0))
+    return dimensions, ((0, x_size), (0, y - 1), *sizes)
 
 
 def test(expected, actual):
