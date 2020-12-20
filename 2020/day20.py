@@ -3,8 +3,7 @@ from collections import namedtuple, defaultdict
 from copy import deepcopy
 from math import sqrt
 
-from typing import List, Dict, Tuple, Set, Union
-
+from typing import List, Dict, Tuple, Set
 
 TileVariants = namedtuple('TileVariants', ['id', 'position'])
 
@@ -51,9 +50,17 @@ class Tile:
         data = data[::-1]
         return Tile(self.id, data)
 
-    def print(self) -> None:
+    def print(self) -> List[str]:
+        lines = []
         for line in self.data:
-            print(''.join(['#' if ch == '1' else '.' for ch in line]))
+            lines.append(''.join(['#' if ch == '1' else '.' for ch in line]))
+        return lines
+
+    def print_without_borders(self) -> List[str]:
+        lines = []
+        for line in self.data[1:-1]:
+            lines.append(''.join(['#' if ch == '1' else '.' for ch in line[1:-1]]))
+        return lines
 
     def __repr__(self):
         return f'{self.id}'
@@ -61,12 +68,11 @@ class Tile:
 
 def part1(tile_data: str) -> int:
     tiles = _parse_data(tile_data)
-    size = int(sqrt(len(tiles)))
     variants = {}
 
     for tile in tiles:
         flipped_tile = tile.flip()
-        variants[tile.id] = [tile, tile.rotate(90), tile.rotate(180), flipped_tile.rotate(270),
+        variants[tile.id] = [tile, tile.rotate(90), tile.rotate(180), tile.rotate(270),
                              flipped_tile, flipped_tile.rotate(90), flipped_tile.rotate(180), flipped_tile.rotate(270)]
 
     neighbors = _possible_neighbors(variants)
@@ -78,9 +84,96 @@ def part1(tile_data: str) -> int:
 
     return result
 
-    # result = _dfs_search((0, 0), size, variants, set(variants.keys()), [[None for _ in range(size)] for _ in range(size)])
-    #
-    # return result[0][0].id * result[0][-1].id * result[-1][0].id * result[-1][-1].id
+
+def part2(tile_data: str) -> int:
+    tiles = _parse_data(tile_data)
+    size = int(sqrt(len(tiles)))
+    variants = {}
+
+    for tile in tiles:
+        flipped_tile = tile.flip()
+        variants[tile.id] = [tile, tile.rotate(90), tile.rotate(180), tile.rotate(270),
+                             flipped_tile, flipped_tile.rotate(90), flipped_tile.rotate(180), flipped_tile.rotate(270)]
+
+    neighbors = _possible_neighbors(variants)
+    image_tiles = _restore_image(neighbors, variants, size)
+
+    image_repr = '\n'.join(_print_image(image_tiles))
+    image = _parse_data(f'Tile 9999:\n{image_repr}\n')[0]
+    flipped_image = image.flip()
+
+    image_variants = [image, image.rotate(90), image.rotate(180), image.rotate(270), flipped_image,
+                      flipped_image.rotate(90), flipped_image.rotate(180), flipped_image.rotate(270)]
+
+    for variant in image_variants:
+        found, habitat = _check_sea_monsters(variant)
+
+        if found:
+            return habitat
+
+def _get_sea_monster_offsets() -> List[Tuple[int, int]]:
+    sea_monster = """
+                  #
+#    ##    ##    ###
+ #  #  #  #  #  #
+    """
+
+    offsets = [
+        (-1, 18),
+        (0, 0), (0, 5), (0, 6), (0, 11), (0, 12),  (0, 17), (0, 18), (0, 19),
+        (1, 1), (1, 4), (1, 7), (1, 10), (1, 13), (1, 16),
+    ]
+
+    return offsets
+
+
+def _check_sea_monsters(image: Tile) -> Tuple[bool, int]:
+    habitat = 0
+    data = []
+
+    for y in range(len(image.data)):
+        data.append([])
+        for x in range(len(image.data[0])):
+            if image.data[y][x] == '1':
+                habitat += 1
+                data[y].append('#')
+            else:
+                data[y].append('.')
+
+    offsets = _get_sea_monster_offsets()
+    size = sorted(offsets, key=lambda item: -item[1])[0][1] + 1
+    found = False
+
+    for y in range(1, len(data) - 1):
+        for x in range(len(data[0]) - size + 1):
+            if data[y][x] == '#':
+                local_found = True
+                for offset in offsets:
+                    if data[y + offset[0]][x + offset[1]] != '#':
+                        local_found = False
+                        break
+
+                if local_found:
+                    found = True
+                    habitat -= len(offsets)
+                    for offset in offsets:
+                        data[y + offset[0]][x + offset[1]] = 'O'
+
+    return found, habitat
+
+
+def _print_image(image: List[List[Tile]]) -> List[str]:
+    lines = []
+
+    for y in range(len(image)):
+        reprs = [image[y][x].print_without_borders() for x in range(len(image[y]))]
+        for k in range(len(reprs[0])):
+            line = []
+            for r in range(len(reprs)):
+                line.append(reprs[r][k])
+            lines.append(''.join(line))
+
+    return lines
 
 
 def _possible_neighbors(variants: Dict[int, List[Tile]]) -> Dict[int, Set[int]]:
@@ -109,38 +202,58 @@ def _possible_neighbors(variants: Dict[int, List[Tile]]) -> Dict[int, Set[int]]:
     return neighbors
 
 
+def _find_top_left_corner_tile(neighbors: Dict[int, Set[int]], variants: Dict[int, List[Tile]]) -> Tile:
+    corners = {k: v for k, v in neighbors.items() if len(v) == 2}
+    corner_id = list(corners.keys())[0]
+    nbr_1_id, nbr_2_id = list(neighbors[corner_id])
 
-def _dfs_search(pos: Tuple[int, int], size: int, tiles: Dict[int, List[Tile]], unused: Set[int], puzzle: List[List[Union[TileVariants, None]]]) -> Union[List[List[TileVariants]], None]:
-    if not unused:
-        return puzzle
+    for corner_variant in variants[corner_id]:
+        for variant_1 in variants[nbr_1_id]:
+            for variant_2 in variants[nbr_2_id]:
+                if corner_variant.right == variant_1.left and corner_variant.bottom == variant_2.top:
+                    return corner_variant
+                if corner_variant.right == variant_2.left and corner_variant.bottom == variant_1.top:
+                    return corner_variant
 
-    x, y = pos
 
-    for tile_id in list(unused):
-        for i, tile in enumerate(tiles[tile_id]):
-            if x > 0 and tiles[puzzle[y][x - 1].id][puzzle[y][x - 1].position].right != tile.left:
+def _restore_image(neighbors: Dict[int, Set[int]], variants: Dict[int, List[Tile]], size: int) -> List[List[Tile]]:
+    image = [[None for _ in range(size)] for _ in range(size)]
+    image[0][0] = _find_top_left_corner_tile(neighbors, variants)
+    visited = {image[0][0].id}
+
+    for y in range(size):
+        for x in range(size):
+            if x == 0 and y == 0:
                 continue
 
-            if y > 0 and tiles[puzzle[y - 1][x].id][puzzle[y - 1][x].position].bottom != tile.top:
-                continue
+            neighbor_ids = neighbors[image[y - 1][x].id] if x == 0 else neighbors[image[y][x - 1].id]
 
-            puzzle[y][x] = TileVariants(tile.id, i)
+            for neighbor_id in neighbor_ids:
+                if neighbor_id in visited:
+                    continue
 
-            new_x = (x + 1) % size
-            new_y = y + 1 if x == size - 1 else y
+                for neighbor_variant in variants[neighbor_id]:
+                    if x == 0:
+                        if neighbor_variant.top == image[y - 1][x].bottom:
+                            image[y][x] = neighbor_variant
+                            visited.add(neighbor_variant.id)
+                            break
 
-            res = _dfs_search((new_x, new_y), size, tiles, unused - {tile_id}, puzzle)
+                    elif y == 0:
+                        if neighbor_variant.left == image[y][x - 1].right:
+                            image[y][x] = neighbor_variant
+                            visited.add(neighbor_variant.id)
+                            break
 
-            if res:
-                return res
-            else:
-                puzzle[y][x] = None
+                    elif neighbor_variant.left == image[y][x - 1].right and neighbor_variant.top == image[y - 1][x].bottom:
+                        image[y][x] = neighbor_variant
+                        visited.add(neighbor_variant.id)
+                        break
 
-    return None
+                if image[y][x]:
+                    break
 
-
-def part2(tile_data: str) -> int:
-    pass
+    return image
 
 
 def _parse_data(tile_data: str) -> List[Tile]:
@@ -169,6 +282,117 @@ def test(expected, actual):
 
 
 test(20899048083289, part1("""
+Tile 2311:
+..##.#..#.
+##..#.....
+#...##..#.
+####.#...#
+##.##.###.
+##...#.###
+.#.#.#..##
+..#....#..
+###...#.#.
+..###..###
+
+Tile 1951:
+#.##...##.
+#.####...#
+.....#..##
+#...######
+.##.#....#
+.###.#####
+###.##.##.
+.###....#.
+..#.#..#.#
+#...##.#..
+
+Tile 1171:
+####...##.
+#..##.#..#
+##.#..#.#.
+.###.####.
+..###.####
+.##....##.
+.#...####.
+#.##.####.
+####..#...
+.....##...
+
+Tile 1427:
+###.##.#..
+.#..#.##..
+.#.##.#..#
+#.#.#.##.#
+....#...##
+...##..##.
+...#.#####
+.#.####.#.
+..#..###.#
+..##.#..#.
+
+Tile 1489:
+##.#.#....
+..##...#..
+.##..##...
+..#...#...
+#####...#.
+#..#.#.#.#
+...#.#.#..
+##.#...##.
+..##.##.##
+###.##.#..
+
+Tile 2473:
+#....####.
+#..#.##...
+#.##..#...
+######.#.#
+.#...#.#.#
+.#########
+.###.#..#.
+########.#
+##...##.#.
+..###.#.#.
+
+Tile 2971:
+..#.#....#
+#...###...
+#.#.###...
+##.##..#..
+.#####..##
+.#..####.#
+#..#.#..#.
+..####.###
+..#.#.###.
+...#.#.#.#
+
+Tile 2729:
+...#.#.#.#
+####.#....
+..#.#.....
+....#..#.#
+.##..##.#.
+.#.####...
+####.#.#..
+##.####...
+##..#.##..
+#.##...##.
+
+Tile 3079:
+#.#.#####.
+.#..######
+..#.......
+######....
+####.#..#.
+.#...#.##.
+#.#####.##
+..#.###...
+..#.......
+..#.###...
+"""))
+
+
+test(273, part2("""
 Tile 2311:
 ..##.#..#.
 ##..#.....
