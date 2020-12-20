@@ -1,5 +1,5 @@
 import os
-from collections import namedtuple, Counter
+from collections import namedtuple, defaultdict
 from copy import deepcopy
 from math import sqrt
 
@@ -69,9 +69,45 @@ def part1(tile_data: str) -> int:
         variants[tile.id] = [tile, tile.rotate(90), tile.rotate(180), flipped_tile.rotate(270),
                              flipped_tile, flipped_tile.rotate(90), flipped_tile.rotate(180), flipped_tile.rotate(270)]
 
-    result = _dfs_search((0, 0), size, variants, set(variants.keys()), [[None for _ in range(size)] for _ in range(size)])
+    neighbors = _possible_neighbors(variants)
+    corners = [k for k, v in neighbors.items() if len(v) == 2]
 
-    return result[0][0].id * result[0][-1].id * result[-1][0].id * result[-1][-1].id
+    result = 1
+    for tile_id in corners:
+        result *= tile_id
+
+    return result
+
+    # result = _dfs_search((0, 0), size, variants, set(variants.keys()), [[None for _ in range(size)] for _ in range(size)])
+    #
+    # return result[0][0].id * result[0][-1].id * result[-1][0].id * result[-1][-1].id
+
+
+def _possible_neighbors(variants: Dict[int, List[Tile]]) -> Dict[int, Set[int]]:
+    neighbors = defaultdict(set)
+    v_keys = sorted(variants.keys())
+    for i in range(0, len(v_keys) - 1):
+        tile_id = v_keys[i]
+        for j in range(i + 1, len(v_keys)):
+            other_tile_id = v_keys[j]
+            if tile_id == other_tile_id:
+                continue
+            is_added = False
+            for variant in variants[tile_id]:
+                if not is_added:
+                    for other_variant in variants[other_tile_id]:
+                        if not is_added:
+                            for border in variant.borders:
+                                if not is_added:
+                                    for other_border in other_variant.borders:
+                                        if variant.borders[border] == other_variant.borders[other_border]:
+                                            neighbors[tile_id].add(other_tile_id)
+                                            neighbors[other_tile_id].add(tile_id)
+                                            is_added = True
+                                            break
+
+    return neighbors
+
 
 
 def _dfs_search(pos: Tuple[int, int], size: int, tiles: Dict[int, List[Tile]], unused: Set[int], puzzle: List[List[Union[TileVariants, None]]]) -> Union[List[List[TileVariants]], None]:
