@@ -30,7 +30,7 @@ def _recursive_combat(player1: List[Tuple[int, int]], player2: List[Tuple[int, i
     states = set()
 
     while player1 and player2:
-        current_state = f'{str([num for _, num in heapq.nsmallest(len(player1), player1)])}{str([num for _, num in heapq.nsmallest(len(player2), player2)])}'
+        current_state = tuple([num for _, num in heapq.nsmallest(len(player1), player1)] + [0] + [num for _, num in heapq.nsmallest(len(player2), player2)])
         if current_state in states:
             return True, [], []
 
