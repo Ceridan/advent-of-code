@@ -1,5 +1,6 @@
 import heapq
 import os
+from collections import deque
 
 from typing import List, Tuple
 
@@ -29,7 +30,7 @@ def _recursive_combat(player1: List[Tuple[int, int]], player2: List[Tuple[int, i
     states = set()
 
     while player1 and player2:
-        current_state = f'{str([num for _, num in player1])}{str([num for _, num in player2])}'
+        current_state = f'{str([num for _, num in heapq.nsmallest(len(player1), player1)])}{str([num for _, num in heapq.nsmallest(len(player2), player2)])}'
         if current_state in states:
             return True, [], []
 
@@ -120,6 +121,17 @@ test(306, part1([
     '4',
     '7',
     '10',
+]))
+
+test(105, part2([
+    'Player 1:',
+    '43',
+    '19',
+    '',
+    'Player 2:',
+    '2',
+    '29',
+    '14',
 ]))
 
 test(291, part2([
