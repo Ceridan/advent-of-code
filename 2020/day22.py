@@ -20,18 +20,18 @@ def part1(deck: List[str]) -> int:
 
 def part2(deck: List[str]) -> int:
     player1, player2 = _parse_deck(deck)
-    _, p1, p2 = _recursive_combat(player1, player2)
+    _recursive_combat(player1, player2)
     return _calculate_score(player1, player2)
 
 
-def _recursive_combat(player1: Deque[int], player2: Deque[int]) -> Tuple[bool, Deque[int], Deque[int]]:
+def _recursive_combat(player1: Deque[int], player2: Deque[int]) -> bool:
     states = set()
     delimiter = deque([0])
 
     while player1 and player2:
         current_state = tuple(player1 + delimiter + player2)
         if current_state in states:
-            return True, deque(), deque()
+            return True
 
         states.add(current_state)
 
@@ -41,7 +41,7 @@ def _recursive_combat(player1: Deque[int], player2: Deque[int]) -> Tuple[bool, D
         if num1 <= len(player1) and num2 <= len(player2):
             new_player1 = deque(list(player1)[:num1])
             new_player2 = deque(list(player2)[:num2])
-            is_p1, _, _ = _recursive_combat(new_player1, new_player2)
+            is_p1 = _recursive_combat(new_player1, new_player2)
             winner = player1 if is_p1 else player2
             winner.append(num1 if is_p1 else num2)
             winner.append(num2 if is_p1 else num1)
@@ -51,7 +51,7 @@ def _recursive_combat(player1: Deque[int], player2: Deque[int]) -> Tuple[bool, D
         winner.append(max(num1, num2))
         winner.append(min(num1, num2))
 
-    return len(player1) > 0, player1, player2
+    return len(player1) > 0
 
 
 def _calculate_score(player1: Deque[int], player2: Deque[int]) -> int:
