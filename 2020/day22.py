@@ -1,20 +1,19 @@
-import heapq
 import os
+from collections import deque
 
-from typing import List, Tuple
+from typing import List, Tuple, Deque
 
 
 def part1(deck: List[str]) -> int:
     player1, player2 = _parse_deck(deck)
 
     while player1 and player2:
-        _, num1 = heapq.heappop(player1)
-        _, num2 = heapq.heappop(player2)
+        num1 = player1.popleft()
+        num2 = player2.popleft()
 
         winner = player1 if num1 > num2 else player2
-        w = heapq.nlargest(1, winner)[0][0] if winner else 0
-        heapq.heappush(winner, (w + 1, max(num1, num2)))
-        heapq.heappush(winner, (w + 2, min(num1, num2)))
+        winner.append(max(num1, num2))
+        winner.append(min(num1, num2))
 
     return _calculate_score(player1, player2)
 
@@ -25,57 +24,50 @@ def part2(deck: List[str]) -> int:
     return _calculate_score(player1, player2)
 
 
-def _recursive_combat(player1: List[Tuple[int, int]], player2: List[Tuple[int, int]]) -> Tuple[bool, List[Tuple[int, int]], List[Tuple[int, int]]]:
+def _recursive_combat(player1: Deque[int], player2: Deque[int]) -> Tuple[bool, Deque[int], Deque[int]]:
     states = set()
 
     while player1 and player2:
-        current_state = tuple([num for _, num in heapq.nsmallest(len(player1), player1)] + [0] + [num for _, num in heapq.nsmallest(len(player2), player2)])
+        current_state = f'{str(player1)}{str(player2)}'
         if current_state in states:
-            return True, [], []
+            return True, deque(), deque()
 
         states.add(current_state)
 
-        _, num1 = heapq.heappop(player1)
-        _, num2 = heapq.heappop(player2)
+        num1 = player1.popleft()
+        num2 = player2.popleft()
 
         if num1 <= len(player1) and num2 <= len(player2):
-            new_player1 = [pair for pair in heapq.nsmallest(num1, player1)]
-            heapq.heapify(player1)
-            new_player2 = [pair for pair in heapq.nsmallest(num2, player2)]
-            heapq.heapify(player2)
+            new_player1 = deque(list(player1)[:num1])
+            new_player2 = deque(list(player2)[:num2])
             is_p1, _, _ = _recursive_combat(new_player1, new_player2)
             winner = player1 if is_p1 else player2
-            w = heapq.nlargest(1, winner)[0][0] if winner else 0
-            heapq.heappush(winner, (w + 1, num1 if is_p1 else num2))
-            heapq.heappush(winner, (w + 2, num2 if is_p1 else num1))
+            winner.append(num1 if is_p1 else num2)
+            winner.append(num2 if is_p1 else num1)
             continue
 
         winner = player1 if num1 > num2 else player2
-        w = heapq.nlargest(1, winner)[0][0] if winner else 0
-        heapq.heappush(winner, (w + 1, max(num1, num2)))
-        heapq.heappush(winner, (w + 2, min(num1, num2)))
+        winner.append(max(num1, num2))
+        winner.append(min(num1, num2))
 
     return len(player1) > 0, player1, player2
 
 
-def _calculate_score(player1: List[Tuple[int, int]], player2: List[Tuple[int, int]]) -> int:
+def _calculate_score(player1: Deque[int], player2: Deque[int]) -> int:
     winner = player1 if player1 else player2
-    score = 0
     n = len(winner)
-    i = 0
+    score = 0
 
-    while winner:
-        _, num = heapq.heappop(winner)
+    for i, num in enumerate(winner):
         score += num * (n - i)
         i += 1
 
     return score
 
 
-def _parse_deck(deck: List[str]) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
-    player1 = []
-    player2 = []
-
+def _parse_deck(deck: List[str]) -> Tuple[Deque[int], Deque[int]]:
+    player1 = deque()
+    player2 = deque()
     player = 1
 
     for line in deck:
@@ -93,13 +85,7 @@ def _parse_deck(deck: List[str]) -> Tuple[List[Tuple[int, int]], List[Tuple[int,
         else:
             player2.append(int(line))
 
-    heap1 = [(w, num) for w, num in enumerate(player1)]
-    heapq.heapify(heap1)
-
-    heap2 = [(w, num) for w, num in enumerate(player2)]
-    heapq.heapify(heap2)
-
-    return heap1, heap2
+    return player1, player2
 
 
 def test(expected, actual):
