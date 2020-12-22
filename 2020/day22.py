@@ -26,10 +26,9 @@ def part2(deck: List[str]) -> int:
 
 def _recursive_combat(player1: Deque[int], player2: Deque[int]) -> bool:
     states = set()
-    delimiter = deque([0])
 
     while player1 and player2:
-        current_state = tuple(player1 + delimiter + player2)
+        current_state = (tuple(player1), tuple(player2))
         if current_state in states:
             return True
 
