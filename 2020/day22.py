@@ -1,6 +1,5 @@
 import heapq
 import os
-from collections import deque
 
 from typing import List, Tuple
 
