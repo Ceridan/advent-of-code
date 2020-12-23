@@ -4,19 +4,17 @@ from typing import List, Dict, Tuple
 
 
 class Cup:
-    def __init__(self, val: int, next_: 'Cup' = None):
+    def __init__(self, val: int, destinations: List[int], next_: 'Cup' = None):
         self.val = val
         self.next = next_
-
-    def __repr__(self):
-        return str(self.val)
+        self.destinations = destinations
 
 
 def part1(cups_list: str, turns: int) -> str:
-    current, one, destinations = _parse_cups_list(cups_list, len(cups_list))
-    _play_cups(current, destinations, turns)
+    current, cups = _parse_cups_list(cups_list, len(cups_list))
+    _play_cups(current, cups, turns)
 
-    nxt = one.next
+    nxt = cups[1].next
     result = ''
     while nxt.val != 1:
         result += str(nxt.val)
@@ -26,20 +24,20 @@ def part1(cups_list: str, turns: int) -> str:
 
 
 def part2(cups_list: str, turns: int, cups_amount: int) -> int:
-    current, one, destinations = _parse_cups_list(cups_list, cups_amount)
-    _play_cups(current, destinations, turns)
-    return one.next.val * one.next.next.val
+    current, cups = _parse_cups_list(cups_list, cups_amount)
+    _play_cups(current, cups, turns)
+    return cups[1].next.val * cups[1].next.next.val
 
 
-def _play_cups(current: Cup, destinations:  Dict[int, List[Cup]], turns: int) -> None:
+def _play_cups(current: Cup, cups: Dict[int, Cup], turns: int) -> None:
     for turn in range(1, turns + 1):
         removed = current.next
         removed_set = {removed.val, removed.next.val, removed.next.next.val}
 
         destination = None
-        for cup in destinations[current.val]:
-            if cup.val not in removed_set:
-                destination = cup
+        for prev_val in cups[current.val].destinations:
+            if prev_val not in removed_set:
+                destination = cups[prev_val]
                 break
 
         current.next = removed.next.next.next
@@ -50,18 +48,17 @@ def _play_cups(current: Cup, destinations:  Dict[int, List[Cup]], turns: int) ->
         current = current.next
 
 
-def _parse_cups_list(cups_list: str, amount: int) -> Tuple[Cup, Cup, Dict[int, List[Cup]]]:
-    cups = {i: Cup(i) for i in range(1, amount + 1)}
+def _parse_cups_list(cups_list: str, amount: int) -> Tuple[Cup, Dict[int, Cup]]:
+    cups = {}
 
-    destinations = {
-        i: [
-            cups[i - 1 if i - 1 > 0 else amount + i - 1],
-            cups[i - 2 if i - 2 > 0 else amount + i - 2],
-            cups[i - 3 if i - 3 > 0 else amount + i - 3],
-            cups[i - 4 if i - 4 > 0 else amount + i - 4],
+    for i in range(1, amount + 1):
+        destinations = [
+           i - 1 if i - 1 > 0 else amount + i - 1,
+           i - 2 if i - 2 > 0 else amount + i - 2,
+           i - 3 if i - 3 > 0 else amount + i - 3,
+           i - 4 if i - 4 > 0 else amount + i - 4,
         ]
-        for i in range(1, amount + 1)
-    }
+        cups[i] = Cup(i, destinations)
 
     current = None
     nxt = None
@@ -82,7 +79,7 @@ def _parse_cups_list(cups_list: str, amount: int) -> Tuple[Cup, Cup, Dict[int, L
 
     nxt.next = current
 
-    return current, cups[1], destinations
+    return current, cups
 
 
 def test(expected, actual):
