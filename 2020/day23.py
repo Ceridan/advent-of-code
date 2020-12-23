@@ -54,13 +54,13 @@ def _parse_cups_list(cups_list: str, amount: int) -> Tuple[Cup, Cup, Dict[int, L
     cups = {i: Cup(i) for i in range(1, amount + 1)}
 
     destinations = {
-        **{
-            1: [cups[amount], cups[amount - 1], cups[amount - 2], cups[amount - 3]],
-            2: [cups[1], cups[amount], cups[amount - 1], cups[amount - 2]],
-            3: [cups[2], cups[1], cups[amount], cups[amount - 1]],
-            4: [cups[3], cups[2], cups[1], cups[amount]],
-        },
-        **{i: [cups[i - 1], cups[i - 2], cups[i - 3], cups[i - 4]] for i in range(5, amount + 1)}
+        i: [
+            cups[i - 1 if i - 1 > 0 else amount + i - 1],
+            cups[i - 2 if i - 2 > 0 else amount + i - 2],
+            cups[i - 3 if i - 3 > 0 else amount + i - 3],
+            cups[i - 4 if i - 4 > 0 else amount + i - 4],
+        ]
+        for i in range(1, amount + 1)
     }
 
     current = None
