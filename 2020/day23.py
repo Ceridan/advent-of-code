@@ -1,6 +1,6 @@
 import os
 
-from typing import List
+from typing import List, Dict, Tuple
 
 
 class Cup:
@@ -13,42 +13,25 @@ class Cup:
 
 
 def part1(cups_list: str, turns: int) -> str:
-    current = _parse_cups_list(cups_list)
+    current, one, destinations = _parse_cups_list(cups_list, len(cups_list))
+    _play_cups(current, destinations, turns)
 
-    for turn in range(1, turns + 1):
-        removed = current.next
-        removed_set = {removed.val, removed.next.val, removed.next.next.val}
-
-        v = current.val - 1 if current.val > 1 else 9
-        while v in removed_set:
-            v = v - 1 if v > 1 else 9
-
-        current.next = removed.next.next.next
-        destination = current.next
-
-        while destination.val != v:
-            destination = destination.next
-
-        removed.next.next.next = destination.next
-        destination.next = removed
-
-        current = current.next
-
-    while current.val != 1:
-        current = current.next
-
-    current = current.next
+    nxt = one.next
     result = ''
-    while current.val != 1:
-        result += str(current.val)
-        current = current.next
+    while nxt.val != 1:
+        result += str(nxt.val)
+        nxt = nxt.next
 
     return result
 
 
 def part2(cups_list: str, turns: int, cups_amount: int) -> int:
-    current, one, destinations = _parse_million_cups_list(cups_list, cups_amount)
+    current, one, destinations = _parse_cups_list(cups_list, cups_amount)
+    _play_cups(current, destinations, turns)
+    return one.next.val * one.next.next.val
 
+
+def _play_cups(current: Cup, destinations:  Dict[int, List[Cup]], turns: int) -> None:
     for turn in range(1, turns + 1):
         removed = current.next
         removed_set = {removed.val, removed.next.val, removed.next.next.val}
@@ -66,28 +49,8 @@ def part2(cups_list: str, turns: int, cups_amount: int) -> int:
 
         current = current.next
 
-    return one.next.val * one.next.next.val
 
-
-def _parse_cups_list(cups_list: str):
-    first = None
-    prev = None
-    current = None
-
-    for ch in cups_list.strip():
-        if not first:
-            first = Cup(int(ch))
-            prev = first
-        else:
-            current = Cup(int(ch))
-            prev.next = current
-            prev = current
-
-    current.next = first
-    return first
-
-
-def _parse_million_cups_list(cups_list: str, amount: int):
+def _parse_cups_list(cups_list: str, amount: int) -> Tuple[Cup, Cup, Dict[int, List[Cup]]]:
     cups = {i: Cup(i) for i in range(1, amount + 1)}
 
     destinations = {
@@ -100,27 +63,26 @@ def _parse_million_cups_list(cups_list: str, amount: int):
         **{i: [cups[i - 1], cups[i - 2], cups[i - 3], cups[i - 4]] for i in range(5, amount + 1)}
     }
 
-    first = None
-    prev = None
     current = None
+    nxt = None
+    prev = None
 
-    for ch in cups_list.strip():
-        if not first:
-            first = cups[int(ch)]
-            prev = first
+    for ch in cups_list:
+        nxt = cups[int(ch)]
+        if not current:
+            current = nxt
         else:
-            current = cups[int(ch)]
-            prev.next = current
-            prev = current
+            prev.next = nxt
+        prev = nxt
 
     for i in range(10, amount + 1):
-        current = cups[i]
-        prev.next = current
-        prev = current
+        nxt = cups[i]
+        prev.next = nxt
+        prev = nxt
 
-    current.next = first
+    nxt.next = current
 
-    return first, cups[1], destinations
+    return current, cups[1], destinations
 
 
 def test(expected, actual):
@@ -134,7 +96,7 @@ test(149245887792, part2('389125467', turns=10000000, cups_amount=1000000))
 
 file_path = os.path.join(os.path.dirname(__file__), 'data/day23.txt')
 with open(file_path, 'r') as f:
-    input_data = f.read()
+    input_data = f.read().strip()
 
     print('Day 23, part 1: %r' % (part1(input_data, turns=100)))
     print('Day 23, part 2: %r' % (part2(input_data, turns=10000000, cups_amount=1000000)))
