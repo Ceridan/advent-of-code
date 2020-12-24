@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from typing import List, Tuple, Dict, Set
 
+
 # Coordinates image: http://devmag.org.za/blog/wp-content/uploads/2013/08/screen_136.png
 DIRECTIONS_TO_COORDS = {
     'e': (1, 0),
@@ -14,25 +15,13 @@ DIRECTIONS_TO_COORDS = {
 }
 
 
-class Tile:
-    def __init__(self, coords: (int, int)):
-        self.x = coords[0]
-        self.y = coords[1]
-        self.color = True
-
-    def flip(self):
-        self.color = not self.color
-
-
 def part1(tiles_list: List[str]) -> int:
-    tiles = _parse_tiles_list(tiles_list)
-    black = sum([1 if tile.color else 0 for tile in tiles.values()])
-    return black
+    black_tiles = _parse_tiles_list(tiles_list)
+    return len(black_tiles)
 
 
 def part2(tiles_list: List[str], days: int) -> int:
-    tiles = _parse_tiles_list(tiles_list)
-    black_tiles = set([coords for coords, tile in tiles.items() if tile.color])
+    black_tiles = _parse_tiles_list(tiles_list)
 
     for day in range(1, days + 1):
         black_tiles = _generate_next_state(black_tiles)
@@ -63,8 +52,8 @@ def _generate_next_state(black_tiles: Set[Tuple[int, int]]) -> Set[Tuple[int, in
     return new_black_tiles
 
 
-def _parse_tiles_list(tiles_list: List[str]) -> Dict[Tuple[int, int], Tile]:
-    tiles = {}
+def _parse_tiles_list(tiles_list: List[str]) -> Set[Tuple[int, int]]:
+    black_tiles = set()
 
     for line in tiles_list:
         x, y, i = 0, 0, 0
@@ -79,12 +68,12 @@ def _parse_tiles_list(tiles_list: List[str]) -> Dict[Tuple[int, int], Tile]:
             y += dy
             i += 1
 
-        if (x, y) in tiles:
-            tiles[(x, y)].flip()
+        if (x, y) in black_tiles:
+            black_tiles.remove((x, y))
         else:
-            tiles[(x, y)] = Tile((x, y))
+            black_tiles.add((x, y))
 
-    return tiles
+    return black_tiles
 
 
 def test(expected, actual):
