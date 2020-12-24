@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 
-from typing import List, Tuple, Dict, Set
+from typing import List, Tuple, Set
 
 
 # Coordinates image: http://devmag.org.za/blog/wp-content/uploads/2013/08/screen_136.png
