@@ -1,7 +1,5 @@
 import os
 
-from typing import List
-
 
 def part1(card_public_key: int, door_public_key: int) -> int:
     card_loop_size = _reverse_loop_size(card_public_key, subject_number=7)
